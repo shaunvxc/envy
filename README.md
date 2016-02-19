@@ -6,7 +6,7 @@ Ever been working on a project and wanted to easily test changes or set breakpoi
 #### How?
 Lets say you are working in a virtual environment for project A but get errors thrown from project B (a dependency of project A).  Assuming project B is readily accessible in your workspace, you can simply make any local changes you want to project B (apply breakpoints, etc), and run:
 
-    `envy sync <what you want sync'd>`
+    $ envy sync <what you want sync'd>
   
 This command will detect your current working virtualenv, as well as the path to project B *within* A's virtualenv.  It will copy your local changes to B's site-package within A's virtualenv.
 
@@ -15,7 +15,7 @@ Before copying local changes, envy first backs up the existing virtualenv.  It k
 
 When you are done testing and wish to restore the virtualenv to its original state, simple run:
 
-    `envy clean`
+    $ envy clean
 
 ## Usage Examples
 Copy all changes from `project_b` to `~/.virtualenvs/project_a/lib/pythonX.X/site-packages/project_b`:
