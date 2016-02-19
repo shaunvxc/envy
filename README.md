@@ -39,7 +39,7 @@ Restore virtualenv to its original state:
 This is a very early stage project and can likely be improved.  
 
 ## Contributing
-1. Fork it ( https://github.com/shaunvxc/pytchfork/fork )
+1. Fork it ( https://github.com/shaunvxc/envy/fork )
 1. Create your feature branch (`git checkout -b new-feature`)
 1. Commit your changes (`git commit -am 'Add some feature'`)
 1. Run the tests (`make test`)
