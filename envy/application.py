@@ -6,7 +6,7 @@ import argparse
 import os
 import re
 
-from envy import VERSION
+from envy import VERSION, SUPPORTED_PYTHON_VERSIONS
 
 VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
@@ -17,8 +17,8 @@ def validate(f):
             print("ERR: No active virtual env!")
             return False
 
-        if not in_git_repo():
-            print("ERR: must be run from root of git repo")
+        if not in_python_package():
+            print("ERR: must be run from within a python package")
             return False
 
         return f(args)
@@ -31,24 +31,25 @@ def active_venv():
 def get_active_venv():
     return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
 
-def in_git_repo():
+def in_python_package():
     path = os.getcwd()
-    return os.path.isdir(path + '/.git') or os.path.isdir(path + '/../.git')
+
+    return os.path.isfile(path + '/setup.py') or os.path.isfile(path + '/../setup.py')
 
 def get_package_name():
     return os.getcwd().split("/")[-1]
 
 def get_envy_path():
-    return os.path.expanduser("~/.envies/{}".format(get_package_name()))
+    return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
 # def get_py_version(venv):
-# return re.search("/.virtualenvs/{}/lib/python([2-3].[2-7])",
+#     return re.search("/.virtualenvs/{}/lib/python([2-3].[2-7])".format(venv), venv).group
 
 def get_venv_package_path():
     package_name = get_package_name()
     venv = get_active_venv()
 
-    for py_version in ["2.7", "3.2", "3.3", "3.4"]:
+    for py_version in SUPPORTED_PYTHON_VERSIONS:
         if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, py_version, package_name))):
             return os.path.expanduser(VENV_ROOT.format(venv, py_version, package_name))
 
@@ -61,10 +62,12 @@ def original_backed_up():
     if not os.path.isdir(ENVY_BASE):
         os.system('mkdir {}'.format(ENVY_BASE))
 
+    if not os.path.isdir(ENVY_BASE + "/{}".format(get_active_venv())):
+        os.system('mkdir {}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
+
     return os.path.isdir(get_envy_path())
 
 def back_up(venv_pkg_path):
-    import pdb;pdb.set_trace()
     os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
 @validate
@@ -74,7 +77,9 @@ def sink_all(*args):
     if not original_backed_up():
         back_up(venv_pkg_path)
 
+    # os.system("python setup.py install")
     os.system("cp *.py {}".format(venv_pkg_path))
+
     print ("Sinked")
 
 @validate
