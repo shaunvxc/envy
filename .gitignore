@@ -1,0 +1,9 @@
+
+build
+.coverage
+*.egg-info
+dist
+*.pyc
+*.txt~
+*.py~
+TAGS
