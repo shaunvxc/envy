@@ -12,7 +12,7 @@ VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
 
 def validate(f):
-    def wrapper(*args):
+    def wrapper(args):
         if not active_venv():
             print("ERR: No active virtual env!")
             return False
@@ -71,25 +71,28 @@ def back_up(venv_pkg_path):
     os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
 @validate
-def sink_all(*args):
+def sync(args):
     venv_pkg_path = get_venv_package_path()
 
     if not original_backed_up():
+        print ("backing up {} ".format(venv_pkg_path))
         back_up(venv_pkg_path)
 
-    # os.system("python setup.py install")
-    os.system("cp *.py {}".format(venv_pkg_path))
-
-    print ("Sinked")
+    print ("Syncing local changes")
+    os.system("cp -r {} {}".format(args.path[0], venv_pkg_path))
+    print ("Local changes synced")
 
 @validate
-def sink_clean(*args):
+def clean(args):
     venv_pkg_path = get_venv_package_path()
     # remove applied changes
+    print("cleaning local changes")
     os.system("rm -rf {}".format(venv_pkg_path))
     # copy over the original package from ~/.envies
+    print ("restoring original virtualenv state")
     os.system("cp -r {} {}".format(get_envy_path(), venv_pkg_path))
     # remove envy backup
+    print ("removing .envie")
     os.system("rm -rf {}".format(get_envy_path()))
 
 
@@ -99,22 +102,22 @@ def prepare_parser():
 
     subparsers = parser.add_subparsers(dest='command_name')
 
-    parser_search = subparsers.add_parser('all', help='sync all files to active virtualenv')
+    parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
 
-    parser_search.set_defaults(func=sink_all)
-    parser_search.add_argument('filename', nargs='*')
+    parser_sync.set_defaults(func=sync)
+    parser_sync.add_argument('path', nargs='*')
 
-    parser_list = subparsers.add_parser('clean', help='reset virtualenv to original state')
-    parser_list.set_defaults(func=sink_clean)
+    parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
+    parser_clean.set_defaults(func=clean)
 
     return parser
 
 
 def main():
     parser = prepare_parser()
-    args = parser.parse_args()
+    argz = parser.parse_args()
 
-    if hasattr(args, 'func'):
-        args.func(args)
+    if hasattr(argz, 'func'):
+        argz.func(argz)
     else:
         parser.print_help()
