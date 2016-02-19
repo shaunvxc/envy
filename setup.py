@@ -24,7 +24,7 @@ setup(
     license='MIT',
     author='Shaun Viguerie',
     author_email='shaunvig114@gmail.com',
-    description='sync and unsync local changes to virtualenvs',
+    description='apply and stash local changes to virtualenvs',
     entry_points={
         'console_scripts': ['envy = envy.application:main']
     },
@@ -35,7 +35,7 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
