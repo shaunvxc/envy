@@ -1,4 +1,4 @@
-# envy
+# envy [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
 
 #### Why?
 Ever been working on a project and wanted to easily test changes or set breakpoints on one of its dependencies?  Envy can help streamline this process.  
