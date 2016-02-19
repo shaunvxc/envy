@@ -21,7 +21,6 @@ setup(
     version=VERSION,
     packages=['envy'],
     url='https://github.com/shaunvxc/envy',
-    download_url='https://github.com/shaunvxc/envy/tarball/' + VERSION,
     license='MIT',
     author='Shaun Viguerie',
     author_email='shaunvig114@gmail.com',
@@ -50,8 +49,6 @@ setup(
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
