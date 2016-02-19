@@ -32,6 +32,10 @@ Restore virtualenv to its original state:
 
 `(project_a)$: envy clean`
 
+##Installation
+
+`$ pip install envy`
+
 This is a very early stage project and can likely be improved.  
 
 ## Contributing
