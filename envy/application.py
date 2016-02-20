@@ -33,7 +33,6 @@ def get_active_venv():
 
 def in_python_package():
     path = os.getcwd()
-
     return os.path.isfile(path + '/setup.py') or os.path.isfile(path + '/../setup.py')
 
 def get_package_name():
@@ -42,16 +41,15 @@ def get_package_name():
 def get_envy_path():
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
-# def get_py_version(venv):
-#     return re.search("/.virtualenvs/{}/lib/python([2-3].[2-7])".format(venv), venv).group
+def get_py_version(venv):
+    return sys.version_info.major + "." + sys.version_info.minor()
 
 def get_venv_package_path():
     package_name = get_package_name()
     venv = get_active_venv()
 
-    for py_version in SUPPORTED_PYTHON_VERSIONS:
-        if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, py_version, package_name))):
-            return os.path.expanduser(VENV_ROOT.format(venv, py_version, package_name))
+    if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), ,package_name))):
+        return os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
 
 
     print("ERR: {}'s virtualenv does not contain {}".format(venv_name, project_name))

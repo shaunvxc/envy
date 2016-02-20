@@ -1,2 +1,1 @@
 VERSION = '0.0.2'
-SUPPORTED_PYTHON_VERSIONS = ["2.7", "3.2", "3.3", "3.4"]
