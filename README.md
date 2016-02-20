@@ -1,7 +1,7 @@
 # envy [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
 
 #### Why?
-Ever been working on a project and wanted to easily test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later?  Let `envy` do it for you!   
+Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later?  Let `envy` do it for you!   
 
 #### How?
 Lets say you are working in a virtual environment for project A but get errors thrown from project B (a dependency of project A).  Assuming project B is readily accessible in your workspace, you can simply make any local changes you want to project B (apply breakpoints, etc), and run:
