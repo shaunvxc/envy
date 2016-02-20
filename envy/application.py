@@ -66,6 +66,15 @@ def original_backed_up():
 def back_up(venv_pkg_path):
     os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
+def edit(args):
+    venv_pkg_path = get_venv_package_path()
+    file_path = args.path[0]
+
+    if "/" in args.path[0]:
+        file_path = args.path[0].split("/")[-1]
+
+    os.system("subl {}/{} &".format(venv_pkg_path, file_path))
+
 @validate
 def sync(args):
     venv_pkg_path = get_venv_package_path()
@@ -111,8 +120,12 @@ def prepare_parser():
     parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
     parser_clean.set_defaults(func=clean)
 
-    return parser
+    parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
+    parser_edit.set_defaults(func=edit)
 
+    parser_edit.add_argument('path', nargs='*')
+
+    return parser
 
 def main():
     parser = prepare_parser()
