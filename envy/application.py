@@ -6,7 +6,7 @@ import argparse
 import os
 import re
 
-from envy import VERSION, SUPPORTED_PYTHON_VERSIONS
+from envy import VERSION
 
 VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
@@ -22,7 +22,6 @@ def validate(f):
             return False
 
         return f(args)
-
     return wrapper
 
 def active_venv():
@@ -41,16 +40,15 @@ def get_package_name():
 def get_envy_path():
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
-def get_py_version(venv):
-    return sys.version_info.major + "." + sys.version_info.minor()
+def get_py_version():
+    return str(sys.version_info.major) + "." + str(sys.version_info.minor)
 
 def get_venv_package_path():
     package_name = get_package_name()
     venv = get_active_venv()
 
-    if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), ,package_name))):
+    if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))):
         return os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
-
 
     print("ERR: {}'s virtualenv does not contain {}".format(venv_name, project_name))
     exit()
@@ -77,7 +75,12 @@ def sync(args):
         back_up(venv_pkg_path)
 
     print ("Syncing local changes")
-    os.system("cp -r {} {}".format(args.path[0], venv_pkg_path))
+
+    if get_package_name() == args.path[0]:
+        os.system("cp -r {} {}".format(args.path[0], venv_pkg_path + "/../"))
+    else:
+        os.system("cp -r {} {}".format(args.path[0], venv_pkg_path))
+
     print ("Local changes synced")
 
 @validate
@@ -113,9 +116,9 @@ def prepare_parser():
 
 def main():
     parser = prepare_parser()
-    argz = parser.parse_args()
+    args = parser.parse_args()
 
-    if hasattr(argz, 'func'):
-        argz.func(argz)
+    if hasattr(args, 'func'):
+        args.func(args)
     else:
         parser.print_help()
