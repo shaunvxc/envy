@@ -53,8 +53,8 @@ def get_venv_package_path():
         return os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
 
     print("ERR: {}'s virtualenv does not contain {}".format(venv, package_name))
+    print os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
     exit()
-
 
 def original_backed_up():
     if not os.path.isdir(ENVY_BASE):
