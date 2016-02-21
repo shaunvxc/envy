@@ -39,4 +39,5 @@ def test_get_envy_path():
 def test_get_package_name():
     mock('os.getcwd', returns= '{}/tests/testsrc/someuser/src/some_package'.format(base))
     mock('os.path.expanduser', returns='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))
+    print ('{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))
     assert get_venv_package_path() == '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)
