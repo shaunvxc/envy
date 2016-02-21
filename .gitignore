@@ -7,3 +7,10 @@ dist
 *.txt~
 *.py~
 TAGS
+.cache
+.eggs
+*.yml~
+*.ini~
+Makefile~
+*.py#
+.#*

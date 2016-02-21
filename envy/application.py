@@ -24,15 +24,17 @@ def validate(f):
         return f(args)
     return wrapper
 
+def get_sys_prefix():
+    return sys.prefix
+
 def active_venv():
-    return '/.virtualenvs/' in sys.prefix
+    return '/.virtualenvs/' in get_sys_prefix()
 
 def get_active_venv():
-    return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
+    return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
 
 def in_python_package():
-    path = os.getcwd()
-    return os.path.isfile(path + '/setup.py') or os.path.isfile(path + '/../setup.py')
+    return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
 
 def get_package_name():
     return os.getcwd().split("/")[-1]

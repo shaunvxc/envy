@@ -2,7 +2,7 @@
 
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from envy import VERSION
 
@@ -28,6 +28,9 @@ setup(
     entry_points={
         'console_scripts': ['envy = envy.application:main']
     },
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'minimock'],
+    test_suite="tests",
     install_requires=required,
     # extras_require=extras,
     classifiers=[
