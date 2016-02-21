@@ -27,9 +27,9 @@ def test_in_python_package():
     mock('os.getcwd', returns= '{}/tests/testsrc/someuser/src/some_package'.format(base))
     assert in_python_package() == True
 
-def test_in_python_package_nested_case():
-    mock('os.getcwd', returns='{}/tests/testsrc/someuser/src/some_package/some_package'.format(base))
-    assert in_python_package() == True
+# def test_in_python_package_nested_case():
+#     mock('os.getcwd', returns='{}/tests/testsrc/someuser/src/some_package/some_package'.format(base))
+#     assert in_python_package() == True
 
 def test_get_envy_path():
     mock('os.getcwd', returns= '{}/tests/testsrc/someuser/src/some_package'.format(base))
