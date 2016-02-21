@@ -32,7 +32,7 @@ def active_venv():
 
 def get_active_venv():
     print ( "Sys_prefix={}".format(get_sys_prefix()))
-    return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
+    return re.search(r".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
 
 def in_python_package():
     return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
