@@ -31,6 +31,7 @@ def active_venv():
     return '/.virtualenvs/' in get_sys_prefix()
 
 def get_active_venv():
+    print ( "Sys_prefix={}".format(get_sys_prefix()))
     return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
 
 def in_python_package():
@@ -53,7 +54,8 @@ def get_venv_package_path():
         return os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
 
     print("ERR: {}'s virtualenv does not contain {}".format(venv, package_name))
-    print os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
+    print (os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name)))
+
     exit()
 
 def original_backed_up():
