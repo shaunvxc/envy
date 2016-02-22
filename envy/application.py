@@ -94,14 +94,20 @@ def get_editor():
 
 @validate
 def edit(args):
+    base_path = "~/.virtualenvs/{}/lib/python{}/site-packages/".format(get_active_venv(), get_py_version())
     venv_pkg_path = get_venv_package_path()
     file_path = args.path[0]
 
-    if "/" in args.path[0]:
-        file_path = args.path[0].split("/")[-1]
+    if not original_backed_up():
+        print ("backing up {} ".format(venv_pkg_path))
+        back_up(venv_pkg_path)
+
+    if "/" not in args.path[0]:
+        # file_path = args.path[0].split("/")[-1]
+        base_path = venv_pkg_path
 
     editor = get_editor()
-    os.system("{} {}/{} &".format(editor, venv_pkg_path, file_path))
+    os.system("{} {}/{} &".format(editor, base_path, file_path))
 
 def set_editor(args):
     config = ENVY_BASE + "/.editor.txt"
