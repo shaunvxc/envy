@@ -29,7 +29,7 @@ setup(
         'console_scripts': ['envy = envy.application:main']
     },
     setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'minimock'],
+    tests_require=['pytest'],
     test_suite="tests",
     install_requires=required,
     # extras_require=extras,
