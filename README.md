@@ -8,20 +8,20 @@ Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a fil
 **`envy edit`** is your friend!
 
 #### How?
-Lets say you are working in a virtual environment for project A but get errors thrown from project B (a dependency of project A).  Assuming project B is readily accessible in your workspace, you can simply make any local changes you want to project B (apply breakpoints, etc), and run:
+Lets say you are working in a virtual environment for a project `foo` but are getting errors thrown from one of `foo`'s depedencies-- a library called `bar`.  Assuming `bar` is readily accessible in your workspace, you can simply make any local changes you want to `bar` (apply breakpoints, etc), and run:
 
-    $ envy sync <what you want sync'd>
+    (foo)$ envy sync bar
   
-This command will detect your current working virtualenv, as well as the path to project B *within* A's virtualenv.  It will copy your local changes to B's site-package within A's virtualenv.
+This command will detect your current working virtualenv (in this case `foo`), as well as the current package you are working in (in this case, `bar`).  `envy` uses this information, along with some checks, to construct `bar`'s location *within* `foo`'s virtualenv.  It will copy your local changes to `bar`'s site-package within `foo`'s virtualenv.
 
-#### How about directly editing the files..?
-Sometimes you might get an error message from a depedency in a virtualenv for which you do not have a local copy (or your local copy is of a different version).  To do this normally, you would have to point a text editor to the file's location within the virtualenv. (i.e. `~/.virtualenvs/some_env/lib/pythonX.X/site-packages/some_dependency/bin.py` )
+#### Okay great, but what if I don't have a local copy of the dependency?
+What if you have no local copy of `bar`?  Or you have a local copy, but your local version is different than the version used in `foo`'s virtual environment.  In these cases, one option is to make a small change or put a breakpoint in the virtualenv's copy of the file.  Of course, this requires pointing a text editor to the file's location within the virtualenv. (i.e. `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar/bar.py` )
 
 In these cases, you can use `envy`'s `edit` command to directly edit the copy of the file within the virtual environment, in the text editor of your choice (`vim` by default).
 
-    (some_env)$ envy edit some_dependency/bin.py
+    (foo)$ envy edit bar/bar.py
 
-This command will open the `some_dependency/bin.py` within `some_env`'s virtual environment (a lot quicker, no?).
+This command will open the `bar/bar.py` within `foo`'s virtual environment (a lot quicker, no?).
 
 #### Could this corrupt my virtualenv?
 Before copying local changes (or directly making changes with `envy edit`), envy first backs up the existing virtualenv.  It keeps a clean copy in `~/.envies/{virtual_env_name}/{project_name}`.
@@ -31,17 +31,32 @@ When you are done testing and wish to restore the virtualenv to its original sta
 `$ envy clean`
 
 ## Usage Examples
-Copy all changes from `project_b` to `~/.virtualenvs/project_a/lib/pythonX.X/site-packages/project_b`:
+Copy all changes from `foo` to `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar`:
 
-`(project_a)$ envy sync project_b `
+`(foo)$ envy sync bar `
 
-Copy changes from a file in `project_b` to `~/.virtualenvs/project_a/lib/pythonX.X/site-packages/project_b`:
+Copy changes from a file in `bell.py` to `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar`:
 
-`(project_a)$ envy sync project_b/file.py`
+`(foo)$ envy sync bar/bell.py`
 
 Restore virtualenv to its original state:
 
-`(project_a)$ envy clean`
+`(foo)$ envy clean`
+
+### `envy edit`
+Set the default text editor that you'd like to summon when using `envy edit`:
+
+`$ envy edit set-editor vim # or emacs, atom, subl, etc`
+
+Edit the virtualenv's copy of a file directly: `bell.py`
+
+`(foo)$ envy edit bar/bell.py`
+
+**Note** that for the above command, unless you are running `envy` from within a local copy of `bar`, you'll NEED to specify the *both* package-name *and* the filename (as is done in the above with both `bar` and `bell.py`) 
+
+If you *are* running `envy` from within a local copy of the package you are debugging, you can omit the package and just run:
+
+`(foo)$ envy edit bar.py`
 
 ##Installation
 
