@@ -27,8 +27,8 @@ This command will open the `some_dependency/bin.py` within `some_env`'s virtual 
 Before copying local changes (or directly making changes with `envy edit`), envy first backs up the existing virtualenv.  It keeps a clean copy in `~/.envies/{virtual_env_name}/{project_name}`.
 
 When you are done testing and wish to restore the virtualenv to its original state, simply run:
-
-    $ envy clean
+    
+`$ envy clean`
 
 ## Usage Examples
 Copy all changes from `project_b` to `~/.virtualenvs/project_a/lib/pythonX.X/site-packages/project_b`:
@@ -41,7 +41,7 @@ Copy changes from a file in `project_b` to `~/.virtualenvs/project_a/lib/pythonX
 
 Restore virtualenv to its original state:
 
-`(project_a)$: envy clean`
+`(project_a)$ envy clean`
 
 ##Installation
 
