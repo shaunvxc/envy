@@ -25,7 +25,7 @@ This command will open the `bar/bar.py` within `foo`'s virtual environment (a lo
 
 #### Could this corrupt my virtualenv? :fearful:
 
-Rest easy! :sweat_smile: Before copying local changes (or directly making changes with `envy edit`), envy **first** backs up the existing virtualenv.  It keeps a clean copy in `~/.envies/{virtual_env_name}/{project_name}`.
+Before copying local changes (or directly making changes with `envy edit`), envy **first** backs up the existing virtualenv.  It keeps a clean copy in `~/.envies/{virtual_env_name}/{project_name}`.
 
 Whenever you are done testing and/or wish to restore the virtualenv to its original state, simply run:
     
