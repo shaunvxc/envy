@@ -11,8 +11,6 @@ from envy import VERSION
 VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
 
-help = None
-
 class helper(object):
     def get_sys_prefix(self):
         return sys.prefix
@@ -20,15 +18,10 @@ class helper(object):
     def get_py_version(self):
         return str(sys.version_info.major) + "." + str(sys.version_info.minor)
 
-def get_helper():
-    global help
-    if help is None:
-        help = helper()
 
-    return help
+help = helper()
 
 def validate(f):
-
     def wrapper(args):
         if not active_venv():
             print("ERR: No active virtual env!")
@@ -43,7 +36,7 @@ def validate(f):
 
 
 def get_sys_prefix():
-    return get_helper().get_sys_prefix()
+    return helper.get_sys_prefix()
 
 def active_venv():
     return '/.virtualenvs/' in get_sys_prefix()
@@ -61,7 +54,7 @@ def get_envy_path():
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
 def get_py_version():
-    return get_helper().get_py_version()
+    return helper.get_py_version()
 
 def get_venv_package_path():
     package_name = get_package_name()
