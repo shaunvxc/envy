@@ -8,7 +8,7 @@ Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a fil
 #### How?
 Lets say you are working in a virtual environment for a project `foo` but are getting errors thrown from one of `foo`'s depedencies-- a library called `bar`.  Assuming `bar` is readily accessible in your workspace, you can simply make any local changes you want to `bar` (apply breakpoints, etc), and run:
 
-    (foo)$ envy sync bar
+   `(foo)$ envy sync bar`
   
 This command will detect your current working virtualenv (in this case `foo`), as well as the current package you are working in (in this case, `bar`).  `envy` uses this information, along with some checks, to construct `bar`'s location *within* `foo`'s virtualenv.  It will copy your local changes to `bar`'s site-package within `foo`'s virtualenv.
 
@@ -19,7 +19,7 @@ In these cases, one option is to make a small change or put a breakpoint in the 
 
 A better option is to use `envy`'s `edit` command to directly edit the copy of the file within the virtual environment, in the text editor of your choice (`vim` by default).
 
-    (foo)$ envy edit bar/bar.py
+   `(foo)$ envy edit bar/bar.py`
 
 This command will open the `bar/bar.py` within `foo`'s virtual environment (a lot quicker, no?).
 
