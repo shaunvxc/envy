@@ -32,7 +32,6 @@ setup(
     tests_require=['pytest'],
     test_suite="tests",
     install_requires=required,
-    # extras_require=extras,
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
