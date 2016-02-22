@@ -1,4 +1,4 @@
-# envy [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
+# envy [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy) [![Build Status](https://travis-ci.org/shaunvxc/envy.svg?branch=master)](https://travis-ci.org/shaunvxc/envy)
 
 #### Why?
 Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later? Let `envy` do it for you!
