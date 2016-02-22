@@ -12,6 +12,8 @@ VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
 
 class helper(object):
+    """ right now this is here only because I need to patch these fn's during testing
+    """
     def get_sys_prefix(self):
         return sys.prefix
 
