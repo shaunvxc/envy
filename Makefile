@@ -26,4 +26,4 @@ install:
 test:
 	@echo "Running test..."
 	rm -f .coverage
-	nosetests ./tests/
+	python setup.py test
