@@ -66,7 +66,7 @@ If you **are** running `envy` from within a local copy of the package you are de
 ####Future work:
 
 - improve test coverage
-- ?
+- explore implementing this using sym linking
 
 ## Contributing
 1. Fork it ( https://github.com/shaunvxc/envy/fork )
