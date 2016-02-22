@@ -1,4 +1,4 @@
-# envy [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy) [![Build Status](https://travis-ci.org/shaunvxc/envy.svg?branch=master)](https://travis-ci.org/shaunvxc/envy)
+# envy [![Build Status](https://travis-ci.org/shaunvxc/envy.svg?branch=master)](https://travis-ci.org/shaunvxc/envy) [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
 
 #### Why?
 Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later? Let `envy` do it for you!
@@ -47,7 +47,7 @@ This is a very early stage project and can likely be improved.
 1. Fork it ( https://github.com/shaunvxc/envy/fork )
 1. Create your feature branch (`git checkout -b new-feature`)
 1. Commit your changes (`git commit -am 'Add some feature'`)
-1. Run the tests (`make test`) # need to add tests!!
+1. Run the tests (`make test`)
 1. Push change to the branch (`git push origin new-feature`)
 1. Create a Pull Request
 
