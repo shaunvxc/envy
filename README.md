@@ -64,7 +64,10 @@ If you *are* running `envy` from within a local copy of the package you are debu
 
 `$ pip install envy`
 
-This is a very early stage project and can likely be improved.  
+####Future work:
+
+- improve test coverage
+- ?
 
 ## Contributing
 1. Fork it ( https://github.com/shaunvxc/envy/fork )
