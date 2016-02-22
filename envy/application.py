@@ -19,7 +19,7 @@ class helper(object):
         return str(sys.version_info.major) + "." + str(sys.version_info.minor)
 
 
-help = helper()
+helper = helper()
 
 def validate(f):
     def wrapper(args):
