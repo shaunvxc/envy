@@ -19,7 +19,7 @@ What if you have no local copy of `bar`?  Or you have a local copy, but your loc
 
 In these cases, one option is to make a small change or put a breakpoint in the virtualenv's copy of the file.  Of course, this requires pointing a text editor to the file's location within the virtualenv. (i.e. `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar/bar.py` )
 
-In these cases, you can use `envy`'s `edit` command to directly edit the copy of the file within the virtual environment, in the text editor of your choice (`vim` by default).
+A better option is to use `envy`'s `edit` command to directly edit the copy of the file within the virtual environment, in the text editor of your choice (`vim` by default).
 
     (foo)$ envy edit bar/bar.py
 
