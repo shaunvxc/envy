@@ -11,6 +11,8 @@ from envy import VERSION
 VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
 
+help = None
+
 class helper(object):
     def get_sys_prefix(self):
         return sys.prefix
@@ -18,7 +20,12 @@ class helper(object):
     def get_py_version(self):
         return str(sys.version_info.major) + "." + str(sys.version_info.minor)
 
-help = helper()
+def get_helper():
+    global help
+    if help is None:
+        help = helper()
+
+    return help
 
 def validate(f):
 
@@ -36,7 +43,7 @@ def validate(f):
 
 
 def get_sys_prefix():
-    return helper.get_sys_prefix()
+    return get_helper().get_sys_prefix()
 
 def active_venv():
     return '/.virtualenvs/' in get_sys_prefix()
@@ -54,7 +61,7 @@ def get_envy_path():
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
 def get_py_version():
-    return helper.get_py_version()
+    return get_helper().get_py_version()
 
 def get_venv_package_path():
     package_name = get_package_name()
@@ -80,6 +87,12 @@ def original_backed_up():
 def back_up(venv_pkg_path):
     os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
+def get_editor():
+    config = ENVY_BASE + "/.editor.txt"
+    editor = open(config).readline()
+    return editor.rstrip()
+
+@validate
 def edit(args):
     venv_pkg_path = get_venv_package_path()
     file_path = args.path[0]
@@ -87,7 +100,18 @@ def edit(args):
     if "/" in args.path[0]:
         file_path = args.path[0].split("/")[-1]
 
-    os.system("subl {}/{} &".format(venv_pkg_path, file_path))
+    editor = get_editor()
+    os.system("{} {}/{} &".format(editor, venv_pkg_path, file_path))
+
+def set_editor(args):
+    config = ENVY_BASE + "/.editor.txt"
+    if not os.path.isfile(config):
+        os.system('touch {}'.format(config))
+        os.system('echo {} > {}'.format(args.editor[0], config))
+    else:
+        os.system('rm {}'.format(config))
+        os.system('touch {}'.format(config))
+        os.system('echo {} > {}'.format(args.editor[0], config))
 
 @validate
 def sync(args):
@@ -138,6 +162,10 @@ def prepare_parser():
     parser_edit.set_defaults(func=edit)
 
     parser_edit.add_argument('path', nargs='*')
+
+    parser_editor = subparsers.add_parser('set-editor', help='edit dependency sourcefile')
+    parser_editor.set_defaults(func=set_editor)
+    parser_editor.add_argument('editor', nargs='*')
 
     return parser
 
