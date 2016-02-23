@@ -55,22 +55,22 @@ def get_envy_path():
 
 def get_venv_base_package_path():
     return pkg_resources.get_distribution(get_package_name()).location
+    # except pkg_resources.DistributionNotFound:
 
 def get_venv_full_package_path():
     return get_venv_base_package_path() + "/{}".format(get_package_name())
 
 def original_backed_up():
     if not os.path.isdir(ENVY_BASE):
-        os.mkdirs('{}'.format(ENVY_BASE))
+        os.makedirs('{}'.format(ENVY_BASE))
 
     if not os.path.isdir(ENVY_BASE + "/{}".format(get_active_venv())):
-        os.mkdirs('{}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
+        os.makedirs('{}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
 
     return os.path.isdir(get_envy_path())
 
 def back_up(venv_pkg_path):
     shutil.copytree(venv_pkg_path, get_envy_path())
-    # os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
 def get_editor():
     config = ENVY_BASE + "/.editor.txt"
@@ -87,7 +87,6 @@ def edit(args):
     if not original_backed_up():
         print ("backing up {} ".format(full_package_path))
         back_up(full_package_path)
-
 
     if "/" not in args.path[0]:
         edit_path = full_package_path
@@ -113,27 +112,48 @@ def sync(args):
         print ("backing up {} ".format(venv_pkg_path))
         back_up(venv_pkg_path)
 
-    print ("Syncing local changes")
-
-    if get_package_name() == args.path[0]:
-        os.system("cp -r {} {}".format(args.path[0], venv_pkg_path + "/../"))
-    else:
-        os.system("cp -r {} {}".format(args.path[0], venv_pkg_path))
-
-    print ("Local changes synced")
+    try:
+        print ("Syncing local changes")
+        copytree(args.path[0], venv_pkg_path)
+        print ("Local changes synced")
+    except Exception as e:
+        clean(args)
+        raise e
 
 @validate
 def clean(args):
     venv_pkg_path = get_venv_full_package_path()
     # remove applied changes
     print("cleaning local changes")
-    os.system("rm -rf {}".format(venv_pkg_path))
-    # copy over the original package from ~/.envies
+    shutil.rmtree(venv_pkg_path)
     print ("restoring original virtualenv state")
-    os.system("cp -r {} {}".format(get_envy_path(), venv_pkg_path))
-    # remove envy backup
-    print ("removing .envie")
-    os.system("rm -rf {}".format(get_envy_path()))
+    shutil.copytree(get_envy_path(), venv_pkg_path)
+
+    if os.path.isdir(venv_pkg_path):
+        # ensure successful copy before removing the backup.
+        print ("removing .envie")
+        shutil.rmtree(get_envy_path())
+
+def copytree(src, dst, symlinks = False, ignore = None):
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+        shutil.copystat(src, dst)
+
+    if os.path.isfile(src):
+        shutil.copy2(src, dst)
+        return
+
+    lst = os.listdir(src)
+    if ignore:
+        excl = ignore(src, lst)
+        lst = [x for x in lst if x not in excl]
+    for item in lst:
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
 
 
 def prepare_parser():
