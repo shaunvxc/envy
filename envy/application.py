@@ -7,9 +7,9 @@ import os
 import re
 import pkg_resources
 import shutil
+import subprocess
 
 from envy import VERSION
-
 ENVY_BASE = os.path.expanduser("~/.envies")
 
 def validate(f):
@@ -25,7 +25,6 @@ def validate(f):
         return f(args)
     return wrapper
 
-
 def get_sys_prefix():
     return sys.prefix
 
@@ -38,7 +37,7 @@ def active_venv():
     elif sys.prefix != getattr(sys, "base_prefix", sys.prefix):
         return True
 
-    return '/.virtualenvs/' in sys.prefix
+    return False
 
 def get_active_venv():
     return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
@@ -71,9 +70,11 @@ def back_up(venv_pkg_path):
     shutil.copytree(venv_pkg_path, get_envy_path())
 
 def get_editor():
-    config = ENVY_BASE + "/.editor.txt"
-    editor = open(config).readline()
-    return editor.rstrip()
+    if 'EDITOR' in os.environ:
+        return os.environ['EDITOR']
+
+    print ("No $EDITOR system env var specified specified, defaulting to vim...")
+    return 'vim'
 
 @validate
 def edit(args):
@@ -90,17 +91,7 @@ def edit(args):
         edit_path = full_package_path
 
     editor = get_editor()
-    os.system("{} {}/{} &".format(editor, edit_path, file_path))
-
-def set_editor(args):
-    config = ENVY_BASE + "/.editor.txt"
-    if not os.path.isfile(config):
-        os.system('touch {}'.format(config))
-        os.system('echo {} > {}'.format(args.editor[0], config))
-    else:
-        os.system('rm {}'.format(config))
-        os.system('touch {}'.format(config))
-        os.system('echo {} > {}'.format(args.editor[0], config))
+    subprocess.call([editor, os.path.join(edit_path, file_path)], shell = (editor == 'vim'))
 
 @validate
 def sync(args):
@@ -120,9 +111,14 @@ def sync(args):
 
 @validate
 def clean(args):
+    if not os.path.isdir(get_envy_path()):
+        print ("uh oh..no recorded backup in {}".format(get_envy_path()))
+        return
+
     venv_pkg_path = get_venv_full_package_path()
     # remove applied changes
     print("cleaning local changes")
+
     shutil.rmtree(venv_pkg_path)
     print ("restoring original virtualenv state")
     shutil.copytree(get_envy_path(), venv_pkg_path)
@@ -170,12 +166,7 @@ def prepare_parser():
 
     parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
     parser_edit.set_defaults(func=edit)
-
     parser_edit.add_argument('path', nargs='*')
-
-    parser_editor = subparsers.add_parser('set-editor', help='edit dependency sourcefile')
-    parser_editor.set_defaults(func=set_editor)
-    parser_editor.add_argument('editor', nargs='*')
 
     return parser
 
