@@ -1,7 +1,7 @@
 # envy [![Build Status](https://travis-ci.org/shaunvxc/envy.svg?branch=master)](https://travis-ci.org/shaunvxc/envy) [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
 
 #### Why?
-Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later?  Let `envy` do it for you!
+Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version, backing up a copy and running `setup.py install`? Let `envy sync` do it for you!
 
 Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a file **without** having to type out `~/.virtualenvs/blah/lib/pythonX.X/site-packages/more/blah`? Enter `envy edit`!
 
