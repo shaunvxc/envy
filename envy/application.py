@@ -5,23 +5,12 @@ import sys
 import argparse
 import os
 import re
+import pkg_resources
+import shutil
 
 from envy import VERSION
 
-VENV_ROOT = "~/.virtualenvs/{}/lib/python{}/site-packages/{}"
 ENVY_BASE = os.path.expanduser("~/.envies")
-
-class helper(object):
-    """ this class exists solely so the below 2 fns can be patched during testing
-    """
-    def get_sys_prefix(self):
-        return sys.prefix
-
-    def get_py_version(self):
-        return str(sys.version_info.major) + "." + str(sys.version_info.minor)
-
-
-helper = helper()
 
 def validate(f):
     def wrapper(args):
@@ -38,10 +27,19 @@ def validate(f):
 
 
 def get_sys_prefix():
-    return helper.get_sys_prefix()
+    return sys.prefix
 
 def active_venv():
-    return '/.virtualenvs/' in get_sys_prefix()
+    """
+    Return True if we're running inside a virtualenv, False otherwise.
+    """
+    if hasattr(sys, 'real_prefix'):
+        return True
+    elif sys.prefix != getattr(sys, "base_prefix", sys.prefix):
+        return True
+
+    return '/.virtualenvs/' in sys.prefix
+
 
 def get_active_venv():
     return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
@@ -55,32 +53,24 @@ def get_package_name():
 def get_envy_path():
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
 
-def get_py_version():
-    return helper.get_py_version()
+def get_venv_base_package_path():
+    return pkg_resources.get_distribution(get_package_name()).location
 
-def get_venv_package_path():
-    package_name = get_package_name()
-    venv = get_active_venv()
-
-    if os.path.isdir(os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))):
-        return os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name))
-
-    print("ERR: {}'s virtualenv does not contain {}".format(venv, package_name))
-    print (os.path.expanduser(VENV_ROOT.format(venv, get_py_version(), package_name)))
-
-    exit()
+def get_venv_full_package_path():
+    return get_venv_base_package_path() + "/{}".format(get_package_name())
 
 def original_backed_up():
     if not os.path.isdir(ENVY_BASE):
-        os.system('mkdir {}'.format(ENVY_BASE))
+        os.mkdirs('{}'.format(ENVY_BASE))
 
     if not os.path.isdir(ENVY_BASE + "/{}".format(get_active_venv())):
-        os.system('mkdir {}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
+        os.mkdirs('{}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
 
     return os.path.isdir(get_envy_path())
 
 def back_up(venv_pkg_path):
-    os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
+    shutil.copytree(venv_pkg_path, get_envy_path())
+    # os.system("cp -r {} {}".format(venv_pkg_path, get_envy_path()))
 
 def get_editor():
     config = ENVY_BASE + "/.editor.txt"
@@ -89,20 +79,21 @@ def get_editor():
 
 @validate
 def edit(args):
-    base_path = "~/.virtualenvs/{}/lib/python{}/site-packages/".format(get_active_venv(), get_py_version())
-    venv_pkg_path = get_venv_package_path()
+    edit_path = get_venv_base_package_path()
+    full_package_path = get_venv_full_package_path()
+
     file_path = args.path[0]
 
     if not original_backed_up():
-        print ("backing up {} ".format(venv_pkg_path))
-        back_up(venv_pkg_path)
+        print ("backing up {} ".format(full_package_path))
+        back_up(full_package_path)
+
 
     if "/" not in args.path[0]:
-        # file_path = args.path[0].split("/")[-1]
-        base_path = venv_pkg_path
+        edit_path = full_package_path
 
     editor = get_editor()
-    os.system("{} {}/{} &".format(editor, base_path, file_path))
+    os.system("{} {}/{} &".format(editor, edit_path, file_path))
 
 def set_editor(args):
     config = ENVY_BASE + "/.editor.txt"
@@ -116,7 +107,7 @@ def set_editor(args):
 
 @validate
 def sync(args):
-    venv_pkg_path = get_venv_package_path()
+    venv_pkg_path = get_venv_full_package_path()
 
     if not original_backed_up():
         print ("backing up {} ".format(venv_pkg_path))
@@ -133,7 +124,7 @@ def sync(args):
 
 @validate
 def clean(args):
-    venv_pkg_path = get_venv_package_path()
+    venv_pkg_path = get_venv_full_package_path()
     # remove applied changes
     print("cleaning local changes")
     os.system("rm -rf {}".format(venv_pkg_path))
