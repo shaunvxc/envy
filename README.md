@@ -45,10 +45,6 @@ Restore virtualenv to its original state:
 `(foo)$ envy clean`
 
 ### `envy edit`
-Set the default text editor that you'd like to summon when using `envy edit`:
-
-`$ envy edit set-editor vim # or emacs, atom, subl, etc`
-
 Edit the virtualenv's copy of a file directly: `bell.py`
 
 `(foo)$ envy edit bar/bell.py`
@@ -58,6 +54,13 @@ Edit the virtualenv's copy of a file directly: `bell.py`
 If you **are** running `envy` from within a local copy of the package you are debugging, you can omit the package and just run:
 
 `(foo)$ envy edit bar.py`
+
+**Note**
+`envy edit` uses the $EDITOR environment varible to launch a text editor-- if this is not set, simply add:
+
+`export EDITOR=your_editor_of_choice`
+
+to your .bashrc file.
 
 ##Installation
 
