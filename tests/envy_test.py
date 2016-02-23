@@ -14,10 +14,9 @@ base = os.getcwd()
 def setup_test(f):
     @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
     def wrap_patches(*args, **kwargs):
-        with patch('envy.application.sys') as mock_sys:
-            type(mock_sys).prefix = PropertyMock(return_value="./testsrc/someuser/.virtualenvs/someenv/bin")
-            with patch('envy.application.pkg_resources.get_distribution') as mock_pkg:
-                type(mock_pkg.return_value).location = PropertyMock(return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages'.format(base))
+        with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
+            with patch('envy.application.pkg_resources.get_distribution') as mock_get_distribution:
+                mock_get_distribution().location = '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages'.format(base)
                 return f(*args, **kwargs)
 
     return wrap_patches
