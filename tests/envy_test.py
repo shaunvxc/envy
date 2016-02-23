@@ -3,8 +3,7 @@ import os
 import envy
 import pkg_resources
 
-
-from envy import active_venv, get_active_venv, in_python_package, get_package_name, get_envy_path, get_venv_base_package_path, original_backed_up, get_venv_full_package_path
+from envy import active_venv, get_active_venv, in_python_package, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path
 
 from mock import MagicMock, PropertyMock
 from mock import patch
@@ -15,8 +14,7 @@ def setup_test(f):
     @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
     def wrap_patches(*args, **kwargs):
         with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
-            with patch('envy.application.pkg_resources.get_distribution') as mock_get_distribution:
-                mock_get_distribution().location = '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages'.format(base)
+            with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
                 return f(*args, **kwargs)
 
     return wrap_patches
@@ -41,10 +39,6 @@ def test_in_python_package(mock_os):
 @patch('os.path.expanduser', return_value='./testsrc/someuser/.envies/someenv/some_package')
 def test_get_envy_path(dummy, mock_os):
     assert get_envy_path() == './testsrc/someuser/.envies/someenv/some_package'
-
-@setup_test
-def test_get_package_path(mock_os):
-    assert get_venv_base_package_path() == '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages'.format(base)
 
 @setup_test
 def test_get_full_package_path(mock_os):
