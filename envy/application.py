@@ -25,9 +25,6 @@ def validate(f):
         return f(args)
     return wrapper
 
-def get_sys_prefix():
-    return sys.prefix
-
 def active_venv():
     """
     Return True if we're running inside a virtualenv, False otherwise.
@@ -40,7 +37,7 @@ def active_venv():
     return False
 
 def get_active_venv():
-    return re.search(".virtualenvs/([^/]{1,})/bin", get_sys_prefix()).group(1)
+    return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
 
 def in_python_package():
     return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
