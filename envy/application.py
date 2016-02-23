@@ -126,7 +126,7 @@ def clean(args):
         print ("removing .envie")
         shutil.rmtree(get_envy_path())
 
-def copytree(src, dst, symlinks = False, ignore = None):
+def copytree(src, dst):
     if not os.path.exists(dst):
         os.makedirs(dst)
         shutil.copystat(src, dst)
@@ -135,18 +135,13 @@ def copytree(src, dst, symlinks = False, ignore = None):
         shutil.copy2(src, dst)
         return
 
-    lst = os.listdir(src)
-    if ignore:
-        excl = ignore(src, lst)
-        lst = [x for x in lst if x not in excl]
-    for item in lst:
+    for item in os.listdir(src):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
         if os.path.isdir(s):
-            copytree(s, d, symlinks, ignore)
+            copytree(s, d)
         else:
             shutil.copy2(s, d)
-
 
 def prepare_parser():
     parser = argparse.ArgumentParser()
