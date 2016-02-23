@@ -31,7 +31,8 @@ def active_venv():
     """
     if hasattr(sys, 'real_prefix'):
         return True
-    elif sys.prefix != getattr(sys, "base_prefix", sys.prefix):
+
+    if sys.prefix != getattr(sys, "base_prefix", sys.prefix):
         return True
 
     return False
