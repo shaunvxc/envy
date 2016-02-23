@@ -1,9 +1,9 @@
 # envy [![Build Status](https://travis-ci.org/shaunvxc/envy.svg?branch=master)](https://travis-ci.org/shaunvxc/envy) [![PyPI version](https://badge.fury.io/py/envy.svg)](https://badge.fury.io/py/envy)
 
 #### Why?
-Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later? Let `envy` do it for you!
+Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version and running `setup.py install`? **Without** having to deal with backing up the virtualenv beforehand or worry about restoring it later?  Let `envy` do it for you!
 
-Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a file **without** having to punch out the full path? `envy edit` is your friend!
+Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a file **without** having to aving to type out `~/.virtualenvs/blah/lib/pythonX.X/andd_you_get_itt`? `envy edit` to the rescue!
 
 #### How?
 Lets say you are working in a virtual environment for a project `foo` but are getting errors thrown from one of `foo`'s depedencies-- a library called `bar`.  Assuming `bar` is readily accessible in your workspace, you can simply make any local changes you want to `bar` (apply breakpoints, etc), and run:
