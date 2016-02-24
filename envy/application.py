@@ -76,8 +76,8 @@ def get_editor():
     if 'EDITOR' in os.environ:
         return os.environ['EDITOR']
 
-    print ("No $EDITOR system env var specified specified, defaulting to vim...")
-    return 'vim'
+    print ("No $EDITOR system env var specified specified, defaulting to nano...")
+    return "nano"
 
 @validate_env
 def edit(args):
