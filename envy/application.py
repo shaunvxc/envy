@@ -90,9 +90,9 @@ def edit(args):
 
     file_path = args.path[0].split("/")[-1]
 
-    if not original_backed_up():
+    if not original_backed_up(args.path[0]):
         print ("backing up {} ".format(full_package_path))
-        back_up(full_package_path, pkg_name_given_in_arg)
+        back_up(full_package_path, args.path[0])
 
     editor = get_editor()
     subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
