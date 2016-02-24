@@ -22,12 +22,13 @@ base = os.getcwd()
 
 @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
 @patch('envy.application.active_venv', return_value=True)
+@patch('envy.application.get_active_venv', return_value="someenv")
 @patch('envy.application.in_python_package', return_value=True)
-@patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/")
+@patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base))
 @patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base))
 @patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))
 @patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/src/some_package/some_package".format(base))
-def test_sync_and_clean(dummy1, dummy2, dummy3,dummy4, dummy5, dummy6,  mock_os):
+def test_sync_and_clean(dummy1, dummy2, dummy3,dummy4, dummy5, dummy6, dummy7, mock_os):
 
     args = argparse.Namespace()
     args.path = ['some_package']
