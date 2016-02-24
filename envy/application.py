@@ -11,7 +11,8 @@ import subprocess
 
 from envy import VERSION
 
-ENVY_BASE = os.path.expanduser("~/.envies")
+def get_envy_base():
+    return os.path.expanduser("~/.envies")
 
 def validate_env(f):
     def wrapper(args):
@@ -28,7 +29,6 @@ def validate_pkg(f):
             return False
         return f(args)
     return wrapper
-
 
 def active_venv():
     """
@@ -63,11 +63,11 @@ def get_venv_full_package_path(pkg_name=None):
     return imp.find_module(pkg_name)[1]
 
 def original_backed_up():
-    if not os.path.isdir(ENVY_BASE):
-        os.makedirs('{}'.format(ENVY_BASE))
+    if not os.path.isdir(get_envy_base()):
+        os.makedirs('{}'.format(get_envy_base()))
 
-    if not os.path.isdir(ENVY_BASE + "/{}".format(get_active_venv())):
-        os.makedirs('{}'.format(ENVY_BASE +  "/{}".format(get_active_venv())))
+    if not os.path.isdir(get_envy_base() + "/{}".format(get_active_venv())):
+        os.makedirs('{}'.format(get_envy_base() +  "/{}".format(get_active_venv())))
 
     return os.path.isdir(get_envy_path())
 
@@ -87,7 +87,6 @@ def edit(args):
 
     if '/' in args.path[0]:
         pkg_name_given_in_arg = args.path[0].split('/')[0]
-
 
     full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
 
@@ -119,25 +118,22 @@ def sync(args):
 
 @validate_env
 def clean(args):
-    if not os.path.isdir(get_envy_path(args.package_path)):
-        print ("uh oh..no recorded backup in {}".format(get_envy_path(args.package_path)))
+    if not os.path.isdir(get_envy_path(args.path)):
+        print ("uh oh..no recorded backup in {}".format(get_envy_path(args.path)))
         return
 
-    venv_pkg_path = get_venv_full_package_path(args.package_path)
-    # remove applied changes
-    print("cleaning local changes")
-
+    venv_pkg_path = get_venv_full_package_path(args.path)
+    print("cleaning applied changes")
     shutil.rmtree(venv_pkg_path)
     print ("restoring original virtualenv state")
-    shutil.copytree(get_envy_path(args.package_path), venv_pkg_path)
+    shutil.copytree(get_envy_path(args.path), venv_pkg_path)
 
     if os.path.isdir(venv_pkg_path):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
-        shutil.rmtree(get_envy_path(args.package_path))
+        shutil.rmtree(get_envy_path(args.path))
 
 def copytree(src, dst):
-
     if not os.path.exists(dst):
         os.makedirs(dst)
         shutil.copystat(src, dst)
@@ -146,13 +142,16 @@ def copytree(src, dst):
         shutil.copy2(src, dst)
         return
 
+    if not os.path.isdir(src):
+        src = os.path.expanduser(src)
+
     for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            copytree(s, d)
+        ss = os.path.join(src, item)
+        dd = os.path.join(dst, item)
+        if os.path.isdir(ss):
+            copytree(ss, dd)
         else:
-            shutil.copy2(s, d)
+            shutil.copy2(ss, dd)
 
 def prepare_parser():
     parser = argparse.ArgumentParser()
@@ -167,7 +166,7 @@ def prepare_parser():
 
     parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
     parser_clean.set_defaults(func=clean)
-    parser_clean.add_argument('-p', '--package_path')
+    parser_clean.add_argument('-p', '--path')
 
     parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
     parser_edit.set_defaults(func=edit)
