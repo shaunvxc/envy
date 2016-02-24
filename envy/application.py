@@ -48,31 +48,29 @@ def get_active_venv():
 def in_python_package():
     return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
 
-def get_package_name():
-    return os.getcwd().split("/")[-1]
+def get_package_name(pkg_path=None):
+    if pkg_path is None or ('/' not in pkg_path and pkg_path.endswith('.py') or pkg_path == '.'):
+        return os.getcwd().split("/")[-1]
 
-def get_envy_path(pkg_name=None):
-    if pkg_name is None:
-        return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name()))
-    return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), pkg_name))
+    return pkg_path.split('/')[0]
 
-def get_venv_full_package_path(pkg_name=None):
-    if pkg_name is None:
-        return imp.find_module(get_package_name())[1]
+def get_envy_path(pkg_path=None):
+    return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name(pkg_path)))
 
-    return imp.find_module(pkg_name)[1]
+def get_venv_full_package_path(pkg_path=None):
+    return imp.find_module(get_package_name(pkg_path))[1]
 
-def original_backed_up():
+def original_backed_up(pkg_path=None):
     if not os.path.isdir(get_envy_base()):
         os.makedirs('{}'.format(get_envy_base()))
 
     if not os.path.isdir(get_envy_base() + "/{}".format(get_active_venv())):
         os.makedirs('{}'.format(get_envy_base() +  "/{}".format(get_active_venv())))
 
-    return os.path.isdir(get_envy_path())
+    return os.path.isdir(get_envy_path(pkg_path))
 
-def back_up(venv_pkg_path, pkg_name=None):
-    shutil.copytree(venv_pkg_path, get_envy_path(pkg_name))
+def back_up(venv_pkg_path, pkg_path=None):
+    shutil.copytree(venv_pkg_path, get_envy_path(pkg_path))
 
 def get_editor():
     if 'EDITOR' in os.environ:
@@ -102,15 +100,14 @@ def edit(args):
 @validate_env
 @validate_pkg
 def sync(args):
-    venv_pkg_path = get_venv_full_package_path()
-
-    if not original_backed_up():
+    venv_pkg_path = get_venv_full_package_path(args.package[0])
+    if not original_backed_up(args.package[0]):
         print ("backing up {} ".format(venv_pkg_path))
-        back_up(venv_pkg_path)
+        back_up(venv_pkg_path, args.package[0])
 
     try:
         print ("Syncing local changes")
-        copytree(args.path[0], venv_pkg_path)
+        copytree(args.package[0], venv_pkg_path)
         print ("Local changes synced")
     except Exception as e:
         clean(args)
@@ -118,20 +115,20 @@ def sync(args):
 
 @validate_env
 def clean(args):
-    if not os.path.isdir(get_envy_path(args.path)):
-        print ("uh oh..no recorded backup in {}".format(get_envy_path(args.path)))
+    if not os.path.isdir(get_envy_path(args.package[0])):
+        print ("uh oh..no recorded backup in {}".format(get_envy_path(args.package[0])))
         return
 
-    venv_pkg_path = get_venv_full_package_path(args.path)
+    venv_pkg_path = get_venv_full_package_path(args.package[0])
     print("cleaning applied changes")
     shutil.rmtree(venv_pkg_path)
     print ("restoring original virtualenv state")
-    shutil.copytree(get_envy_path(args.path), venv_pkg_path)
+    shutil.copytree(get_envy_path(args.package[0]), venv_pkg_path)
 
     if os.path.isdir(venv_pkg_path):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
-        shutil.rmtree(get_envy_path(args.path))
+        shutil.rmtree(get_envy_path(args.package[0]))
 
 def copytree(src, dst):
     if not os.path.exists(dst):
@@ -162,15 +159,15 @@ def prepare_parser():
     parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
 
     parser_sync.set_defaults(func=sync)
-    parser_sync.add_argument('path', nargs='*')
+    parser_sync.add_argument('package', nargs=1, help='the name of changes to sync-- can either be package_name or a path to a file including the package name (i.e. foo/bar.py , where foo is the package)')
 
     parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
     parser_clean.set_defaults(func=clean)
-    parser_clean.add_argument('-p', '--path')
+    parser_clean.add_argument('package', nargs=1, help='the name of the package to clean')
 
     parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
     parser_edit.set_defaults(func=edit)
-    parser_edit.add_argument('path', nargs='*')
+    parser_edit.add_argument('path', nargs=1)
 
     return parser
 

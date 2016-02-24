@@ -22,7 +22,6 @@ def setup_test(f):
 
     The idea is that the acceptance tests + the tests in envy_test.py will suffice.
     """
-    # @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
     def wrap_patches(*args, **kwargs):
         with patch('envy.application.active_venv', return_value=True):
             with patch('envy.application.get_active_venv', return_value="someenv"):
@@ -40,7 +39,7 @@ def setup_test(f):
 def test_sync_package_and_clean(mock_os):
 
     args = argparse.Namespace()
-    args.path = ['some_package']
+    args.package = ['some_package/test.py']
 
     sync(args)
 
@@ -57,7 +56,7 @@ def test_sync_package_and_clean(mock_os):
 def test_sync_file_and_clean(mock_os):
 
     args = argparse.Namespace()
-    args.path = ['some_package/test.py']
+    args.package = ['some_package/test.py']
 
     sync(args)
 
@@ -75,7 +74,7 @@ def test_sync_file_and_clean(mock_os):
 def test_sync_file_from_inner_dir_and_clean(mock_os):
 
     args = argparse.Namespace()
-    args.path = ['test.py']
+    args.package = ['test.py']
 
     sync(args)
 
