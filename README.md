@@ -69,6 +69,7 @@ to your .bashrc file.
 ####Future work:
 - improve sync
 - improve test coverage
+- add optional virtualenv argument to allow syncing/editing to nonactive virtualenvs
 
 ## Contributing
 1. Fork it ( https://github.com/shaunvxc/envy/fork )
