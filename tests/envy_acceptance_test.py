@@ -11,24 +11,33 @@ import argparse
 
 base = os.getcwd()
 
-# def setup_test(f):
-#     @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
-#     def wrap_patches(*args, **kwargs):
-#         with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
-#             with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
-#                 return f(*args, **kwargs)
+def setup_test(f):
+    """
+    All of this patching is annoying, but seems to be the best way to do acceptance testing on envy.
+    In the test folder, we have keep a file structure consistent with a common structured of a file system
+    with virtual envs.  However, because all of this structure is contained within the test folder of this
+    project-- thereby *NOT* real virtual environments-- all of the code responsible for doing this sort of
+    thing IRL won't work on this dummy data.  So, we patch it all and let the code responsible for backing
+    up copies and moving changes around work with mocked paths.
 
-#     return wrap_patches
+    The idea is that the acceptance tests + the tests in envy_test.py will suffice.
+    """
+    # @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
+    def wrap_patches(*args, **kwargs):
+        with patch('envy.application.active_venv', return_value=True):
+            with patch('envy.application.get_active_venv', return_value="someenv"):
+                with patch('envy.application.in_python_package', return_value=True):
+                    with patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base)):
+                        with patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base)):
+                            with patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)):
+                                with patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/src/some_package/some_package".format(base)):
+                                    return f(*args, **kwargs)
+
+    return wrap_patches
 
 @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
-@patch('envy.application.active_venv', return_value=True)
-@patch('envy.application.get_active_venv', return_value="someenv")
-@patch('envy.application.in_python_package', return_value=True)
-@patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base))
-@patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base))
-@patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))
-@patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/src/some_package/some_package".format(base))
-def test_sync_and_clean(dummy1, dummy2, dummy3,dummy4, dummy5, dummy6, dummy7, mock_os):
+@setup_test
+def test_sync_package_and_clean(mock_os):
 
     args = argparse.Namespace()
     args.path = ['some_package']
@@ -39,8 +48,41 @@ def test_sync_and_clean(dummy1, dummy2, dummy3,dummy4, dummy5, dummy6, dummy7, m
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
 
     clean(args)
-    
+
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == False
 
-    
+@patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
+@setup_test
+def test_sync_file_and_clean(mock_os):
+
+    args = argparse.Namespace()
+    args.path = ['some_package/test.py']
+
+    sync(args)
+
+    assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == True
+    assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
+
+    clean(args)
+
+    assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
+    assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == False
+
+
+@patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package/some_package'.format(base))
+@setup_test
+def test_sync_file_from_inner_dir_and_clean(mock_os):
+
+    args = argparse.Namespace()
+    args.path = ['test.py']
+
+    sync(args)
+
+    assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == True
+    assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
+
+    clean(args)
+
+    assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
+    assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == False
