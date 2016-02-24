@@ -13,14 +13,14 @@ Let's say you are working in a virtual environment for a project `foo` but are g
 
 and you'll instantly be looking at the point-of-error from your favorite text editor!  This is pretty awesome, considering that this would normally require at some point typing out (or copy pasting-- which **is also** annoying) a full path like this: `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar/baz.py`.  
 
-##### Great, the file is open, but I shouldn't create a backup before editing a file in my site-packages?
+##### Great, the file is open, but I shouldn't create a backup before editing a file in my site-packages? :confused:
 This is a good practice, but with `envy`, there is no need! `envy` will create a back up of the entire package (in the above example, `bar`) in `~/.envies/foo/bar`.  Throw down some `pdb`'s, `print`'s, or any little hack you want.  Whenever you are ready to restore the package back to it's original state, you need only run:
 
 `(foo)$ envy clean bar`
 
 And it'll be like you were never there!
 
-### Wait, there's more!
+### Wait, there's more! :pig2: :egg:
 `envy` can also you test changes on a library that you maintain and have checked out locally. 
 
 Say you maintain a library `ham`, as well as another project `eggs` that depends on `ham`.  You want to test out some of you recent changes to `ham`, but are far from ready to start messing with the versioning or running `setup.py install`. With `envy` you can very quickly sync the changes from your local dev copy of `ham` to the one that lives `eggs` virtual environment like so:
@@ -37,7 +37,7 @@ As with `envy edit`, an backup of the package's (`ham`'s) state will be created 
 
 `(eggs)$ envy clean ham`
 
-#### No talk, straight usage
+#### No talk, straight usage :no_mouth:
 
 Edit any file from any site-package installed in your active virtual environment:
 
@@ -46,64 +46,14 @@ Edit any file from any site-package installed in your active virtual environment
 Discard any and all edits and return `any-site-package` to its original state:
 
 `(active-virtualenv)$ envy clean any-site-package`
- ## old readme
 
-It's times like these where `envy` can help!  `envy` gives you the power to open  **any module** within your current virtualenv, **from anywhere** in your filesystem,
+You can run both `edit` and `clean` from anywhere in your filesystem, as long as you are in a virtualenv that contains the package you ask it for.
 
+To sync all local changes from some `random_lib` to where its copy in `some-virtualenv`, run:
 
-Ever been working on a project and wanted to test changes or set breakpoints on one of its dependencies? **Without** having to screw around with the version, backing up a copy and running `setup.py install`? Let `envy sync` do it for you!
+`(some-virtualenv):dev/random_lib$ envy sync random_lib`
 
-Ever wanted to directly edit or put a breakpoint in a virtualenv's copy of a file **without** having to type out `~/.virtualenvs/blah/lib/pythonX.X/site-packages/more/blah`? Enter `envy edit`!
-
-#### How?
-Lets say you are working in a virtual environment for a project `foo` but are getting errors thrown from one of `foo`'s depedencies-- a library called `bar`.  Assuming `bar` is readily accessible in your workspace, you can simply make any local changes you want to `bar` (apply breakpoints, etc), and run:
-
-   `(foo)$ envy sync bar`
-  
-This command will detect your current working virtualenv (in this case `foo`), as well as the current package you are working in (in this case, `bar`).  `envy` uses this information, along with some checks, to construct `bar`'s location *within* `foo`'s virtualenv.  It will copy your local changes to `bar`'s site-package within `foo`'s virtualenv.
-
-#### Okay great, but what if I don't have a local copy of the dependency? :confused:
-What if you have no local copy of `bar`?  Or you have a local copy, but your local version is different than the version used in `foo`'s virtual environment.  
-
-In these cases, one option is to make a small change or put a breakpoint in the virtualenv's copy of the file.  Of course, this requires pointing a text editor to the file's location within the virtualenv. (i.e. `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar/bar.py` )
-
-A better option is to use `envy`'s `edit` command to directly edit the copy of the file within the virtual environment, in the text editor of your choice (`vim` by default).
-
-   `(foo)$ envy edit bar/bar.py`
-
-This command will open the `bar/bar.py` within `foo`'s virtual environment (a lot quicker, no?).
-
-#### Could this corrupt my virtualenv? :fearful:
-
-Before copying local changes (or directly making changes with `envy edit`), envy **first** backs up the existing virtualenv.  It keeps a clean copy in `~/.envies/{virtual_env_name}/{project_name}`.
-
-Whenever you are done testing and/or wish to restore the virtualenv to its original state, simply run:
-    
-`$ envy clean`
-
-## Usage Examples
-Copy all changes from `foo` to `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar`:
-
-`(foo)$ envy sync bar `
-
-Copy changes from a file in `bell.py` to `~/.virtualenvs/foo/lib/pythonX.X/site-packages/bar`:
-
-`(foo)$ envy sync bar/bell.py`
-
-Restore virtualenv to its original state:
-
-`(foo)$ envy clean`
-
-### `envy edit`
-Edit the virtualenv's copy of a file directly: `bell.py`
-
-`(foo)$ envy edit bar/bell.py`
-
-**Note** that for the above command, unless you are running `envy` from within a local copy of `bar`, you'll **need** to specify the **both** package-name **and** the filename (as is done in the above with both `bar` and `bell.py`) 
-
-If you **are** running `envy` from within a local copy of the package you are debugging, you can omit the package and just run:
-
-`(foo)$ envy edit bar.py`
+For the time being, `sync` commands cannot be run as flexibly as `edit` and `clean` (they will only work when run from within the python package you wish to sync)- although it would certainly be possible to improve this in the future.
 
 **Note**
 `envy edit` uses the $EDITOR environment varible to launch a text editor-- if this is not set, simply add:
@@ -117,9 +67,8 @@ to your .bashrc file.
 `$ pip install envy`
 
 ####Future work:
-
+- improve sync
 - improve test coverage
-- explore implementing this using sym linking
 
 ## Contributing
 1. Fork it ( https://github.com/shaunvxc/envy/fork )
