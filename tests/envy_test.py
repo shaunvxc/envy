@@ -14,13 +14,12 @@ def setup_test(f):
     @patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
     def wrap_patches(*args, **kwargs):
         with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
-            with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
-                with patch.dict('os.environ'):
-                    if 'VIRTUAL_ENV' in os.environ:
-                        del os.environ['VIRTUAL_ENV']
-                    if 'WORKON_HOME' in os.environ:
-                        del os.environ['WORKON_HOME']
-                    return f(*args, **kwargs)
+            with patch.dict('os.environ'):
+                if 'VIRTUAL_ENV' in os.environ:
+                    del os.environ['VIRTUAL_ENV']
+                if 'WORKON_HOME' in os.environ:
+                    del os.environ['WORKON_HOME']
+                return f(*args, **kwargs)
 
     return wrap_patches
 
@@ -30,20 +29,22 @@ def test_is_active_venv(mock_os):
 
 @setup_test
 def test_get_package_name(mock_os):
-    assert get_package_name() == 'some_package'
+    assert get_package_name('some_package/__init__.py') == 'some_package'
 
 @setup_test
 def test_in_python_package(mock_os):
     assert in_python_package() == True
 
+# would be nice to not have to patch expand user...
 @setup_test
 @patch('os.path.expanduser', return_value='./testsrc/someuser/.envies/someenv/some_package')
 def test_get_envy_path(dummy, mock_os):
-    assert get_envy_path() == './testsrc/someuser/.envies/someenv/some_package'
+    assert get_envy_path('some_package') == './testsrc/someuser/.envies/someenv/some_package'
 
 @setup_test
 def test_get_full_package_path(mock_os):
-    assert get_venv_full_package_path() == '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)
+    with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
+        assert get_venv_full_package_path('some_package') == '{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)
 
 @setup_test
 def test_in_python_package_nested_case(mock_os):

@@ -52,19 +52,19 @@ def get_active_venv():
 def in_python_package():
     return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
 
-def get_package_name(pkg_path=None):
-    if pkg_path is None or ('/' not in pkg_path and pkg_path.endswith('.py') or pkg_path == '.'):
+def get_package_name(pkg_path):
+    if ('/' not in pkg_path and pkg_path.endswith('.py')) or pkg_path == '.':
         return os.getcwd().split("/")[-1]
 
     return pkg_path.split('/')[0]
 
-def get_envy_path(pkg_path=None):
+def get_envy_path(pkg_path):
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name(pkg_path)))
 
-def get_venv_full_package_path(pkg_path=None):
+def get_venv_full_package_path(pkg_path):
     return imp.find_module(get_package_name(pkg_path))[1]
 
-def original_backed_up(pkg_path=None):
+def original_backed_up(pkg_path):
     if not os.path.isdir(get_envy_base()):
         os.makedirs('{}'.format(get_envy_base()))
 
@@ -73,7 +73,7 @@ def original_backed_up(pkg_path=None):
 
     return os.path.isdir(get_envy_path(pkg_path))
 
-def back_up(venv_pkg_path, pkg_path=None):
+def back_up(venv_pkg_path, pkg_path):
     shutil.copytree(venv_pkg_path, get_envy_path(pkg_path))
 
 def get_editor():
