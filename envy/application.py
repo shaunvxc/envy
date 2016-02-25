@@ -31,9 +31,6 @@ def validate_pkg(f):
     return wrapper
 
 def active_venv():
-    """
-    Return True if we're running inside a virtualenv, False otherwise.
-    """
     if hasattr(sys, 'real_prefix'):
         return True
 
@@ -43,6 +40,13 @@ def active_venv():
     return False
 
 def get_active_venv():
+    if 'VIRTUAL_ENV' in os.environ:
+        return os.environ['VIRTUAL_ENV'].split('/')[-1]
+
+    if 'WORKON_HOME' in os.environ:
+        venv_root = os.environ['WORKON_HOME'].split('/')[-1]
+        return re.search("{}/([^/]{{1,}})/bin".format(venv_root), sys.prefix).group(1)
+
     return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
 
 def in_python_package():
@@ -157,7 +161,6 @@ def prepare_parser():
     subparsers = parser.add_subparsers(dest='command_name')
 
     parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
-
     parser_sync.set_defaults(func=sync)
     parser_sync.add_argument('package', nargs=1, help='the name of changes to sync-- can either be package_name or a path to a file including the package name (i.e. foo/bar.py , where foo is the package)')
 

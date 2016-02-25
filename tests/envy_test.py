@@ -15,7 +15,10 @@ def setup_test(f):
     def wrap_patches(*args, **kwargs):
         with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
             with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
-                return f(*args, **kwargs)
+                with patch.dict('os.environ'):
+                    del os.environ['VIRTUAL_ENV']
+                    del os.environ['WORKON_HOME']
+                    return f(*args, **kwargs)
 
     return wrap_patches
 
@@ -26,10 +29,6 @@ def test_is_active_venv(mock_os):
 @setup_test
 def test_get_package_name(mock_os):
     assert get_package_name() == 'some_package'
-
-@setup_test
-def test_get_active_venv(mock_os):
-    assert envy.get_active_venv() == 'someenv'
 
 @setup_test
 def test_in_python_package(mock_os):
@@ -47,3 +46,19 @@ def test_get_full_package_path(mock_os):
 @setup_test
 def test_in_python_package_nested_case(mock_os):
     assert in_python_package() == True
+
+@setup_test
+def test_get_active_venv_default_case(mock_os):
+    assert envy.get_active_venv() == 'someenv'
+
+@patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
+def test_get_active_venv_non_standard_venv_root(mock_os):
+    with patch.dict('os.environ', {'VIRTUAL_ENV': 'some_env_root/someenv'}):
+        assert get_active_venv() == 'someenv'
+
+@patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package'.format(base))
+def test_get_active_venv_using_workon_path(mock_os):
+    with patch('envy.application.sys.prefix', "./testsrc/someuser/.envs/someenv/bin"):
+        with patch.dict('os.environ', {'WORKON_HOME': '.envs'}):
+            del os.environ['VIRTUAL_ENV']
+            assert get_active_venv() == 'someenv'
