@@ -56,7 +56,7 @@ To sync all local changes from some `random_lib` to where its copy in `some-virt
 For the time being, `sync` commands cannot be run as flexibly as `edit` and `clean` (they will only work when run from within the python package you wish to sync)- although it would certainly be possible to improve this in the future.
 
 **Note**
-`envy edit` uses the $EDITOR environment varible to launch a text editor-- if this is not set, simply add:
+`envy edit` uses the `$EDITOR` environment varible to launch a text editor-- if this is not set, simply add:
 
 `export EDITOR=your_editor_of_choice`
 
