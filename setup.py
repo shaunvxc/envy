@@ -24,7 +24,7 @@ setup(
     license='MIT',
     author='Shaun Viguerie',
     author_email='shaunvig114@gmail.com',
-    description='interact with all virtualenv site-packages as if they were in your working directory',
+    description='interact with virtualenv site-packages as if they were in your working directory',
     entry_points={
         'console_scripts': ['envy = envy.application:main']
     },
