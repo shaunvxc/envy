@@ -16,8 +16,10 @@ def setup_test(f):
         with patch('envy.application.sys.prefix', "./testsrc/someuser/.virtualenvs/someenv/bin"):
             with patch('envy.application.imp.find_module', return_value=(None,'{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base))):
                 with patch.dict('os.environ'):
-                    del os.environ['VIRTUAL_ENV']
-                    del os.environ['WORKON_HOME']
+                    if 'VIRTUAL_ENV' in os.environ:
+                        del os.environ['VIRTUAL_ENV']
+                    if 'WORKON_HOME' in os.environ:
+                        del os.environ['WORKON_HOME']
                     return f(*args, **kwargs)
 
     return wrap_patches
@@ -60,5 +62,6 @@ def test_get_active_venv_non_standard_venv_root(mock_os):
 def test_get_active_venv_using_workon_path(mock_os):
     with patch('envy.application.sys.prefix', "./testsrc/someuser/.envs/someenv/bin"):
         with patch.dict('os.environ', {'WORKON_HOME': '.envs'}):
-            del os.environ['VIRTUAL_ENV']
+            if 'VIRTUAL_ENV' in os.environ:
+                del os.environ['VIRTUAL_ENV']
             assert get_active_venv() == 'someenv'
