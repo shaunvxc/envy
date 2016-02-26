@@ -97,6 +97,8 @@ def edit(args):
     if not original_backed_up(args.path[0]):
         print ("backing up {} ".format(full_package_path))
         back_up(full_package_path, args.path[0])
+    else:
+        print ("backup copy already exists...to restore it before applying new changes run `envy clean` {}".format(args.path[0]))
 
     editor = get_editor()
     subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
@@ -108,6 +110,8 @@ def sync(args):
     if not original_backed_up(args.package[0]):
         print ("backing up {} ".format(venv_pkg_path))
         back_up(venv_pkg_path, args.package[0])
+    else:
+        print ("backup copy already exists...to restore it before applying new changes run `envy clean` {}".format(args.package[0]))
 
     try:
         print ("Syncing local changes")
