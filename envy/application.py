@@ -83,12 +83,10 @@ def get_editor():
     print ("No $EDITOR system env var specified specified, defaulting to nano...")
     return "nano"
 
+
 @validate_env
 def edit(args):
-    pkg_name_given_in_arg = None
-
-    if '/' in args.path[0]:
-        pkg_name_given_in_arg = args.path[0].split('/')[0]
+    pkg_name_given_in_arg = args.path[0].split('/')[0]
 
     full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
 
@@ -98,7 +96,7 @@ def edit(args):
         print ("backing up {} ".format(full_package_path))
         back_up(full_package_path, args.path[0])
     else:
-        print ("backup copy already exists...to restore it before applying new changes run `envy clean` {}".format(args.path[0]))
+        print ("backup copy already exists...to restore it before applying new changes run `envy clean {}`".format(pkg_name_given_in_arg))
 
     editor = get_editor()
     subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
@@ -111,7 +109,7 @@ def sync(args):
         print ("backing up {} ".format(venv_pkg_path))
         back_up(venv_pkg_path, args.package[0])
     else:
-        print ("backup copy already exists...to restore it before applying new changes run `envy clean` {}".format(args.package[0]))
+        print ("backup copy already exists...to restore it before applying new changes run `envy clean {}`".format(args.package[0].split('/')[0]))
 
     try:
         print ("Syncing local changes")
