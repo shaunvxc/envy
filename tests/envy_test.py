@@ -3,7 +3,9 @@ import os
 import envy
 import pkg_resources
 
-from envy import active_venv, get_active_venv, in_python_package, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path
+from envy import get_active_venv, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path
+
+from envy.decorators import active_venv, in_python_package
 
 from mock import MagicMock, PropertyMock
 from mock import patch

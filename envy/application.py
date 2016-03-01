@@ -10,34 +10,11 @@ import shutil
 import subprocess
 
 from envy import VERSION
+from envy.decorators import validate_pkg, validate_env
 
 def get_envy_base():
     return os.path.expanduser("~/.envies")
 
-def validate_env(f):
-    def wrapper(args):
-        if not active_venv():
-            print("ERR: No active virtual env!")
-            return False
-        return f(args)
-    return wrapper
-
-def validate_pkg(f):
-    def wrapper(args):
-        if not in_python_package():
-            print("ERR: must be run from within a python package")
-            return False
-        return f(args)
-    return wrapper
-
-def active_venv():
-    if hasattr(sys, 'real_prefix'):
-        return True
-
-    if sys.prefix != getattr(sys, "base_prefix", sys.prefix):
-        return True
-
-    return False
 
 def get_active_venv():
     if 'VIRTUAL_ENV' in os.environ:
@@ -49,8 +26,6 @@ def get_active_venv():
 
     return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
 
-def in_python_package():
-    return os.path.isfile(os.getcwd() + '/setup.py') or os.path.isfile(os.getcwd() + '/../setup.py')
 
 def get_package_name(pkg_path):
     if ('/' not in pkg_path and pkg_path.endswith('.py')) or pkg_path == '.':
@@ -58,11 +33,14 @@ def get_package_name(pkg_path):
 
     return pkg_path.split('/')[0]
 
+
 def get_envy_path(pkg_path):
     return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name(pkg_path)))
 
+
 def get_venv_full_package_path(pkg_path):
     return imp.find_module(get_package_name(pkg_path))[1]
+
 
 def original_backed_up(pkg_path):
     if not os.path.isdir(get_envy_base()):
@@ -73,8 +51,10 @@ def original_backed_up(pkg_path):
 
     return os.path.isdir(get_envy_path(pkg_path))
 
+
 def back_up(venv_pkg_path, pkg_path):
     shutil.copytree(venv_pkg_path, get_envy_path(pkg_path))
+
 
 def get_editor():
     if 'EDITOR' in os.environ:
@@ -101,6 +81,7 @@ def edit(args):
     editor = get_editor()
     subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
 
+
 @validate_env
 @validate_pkg
 def sync(args):
@@ -119,6 +100,7 @@ def sync(args):
         clean(args)
         raise e
 
+
 @validate_env
 def clean(args):
     if not os.path.isdir(get_envy_path(args.package[0])):
@@ -135,6 +117,7 @@ def clean(args):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
         shutil.rmtree(get_envy_path(args.package[0]))
+
 
 def copytree(src, dst):
     if not os.path.exists(dst):
@@ -156,25 +139,27 @@ def copytree(src, dst):
         else:
             shutil.copy2(ss, dd)
 
+
 def prepare_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='version', version='%(prog)s ' + VERSION)
 
     subparsers = parser.add_subparsers(dest='command_name')
 
-    parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
-    parser_sync.set_defaults(func=sync)
-    parser_sync.add_argument('package', nargs=1, help='the name of changes to sync-- can either be package_name or a path to a file including the package name (i.e. foo/bar.py , where foo is the package)')
+    parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
+    parser_edit.set_defaults(func=edit)
+    parser_edit.add_argument('path', nargs=1)
 
     parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
     parser_clean.set_defaults(func=clean)
     parser_clean.add_argument('package', nargs=1, help='the name of the package to clean')
 
-    parser_edit = subparsers.add_parser('edit', help='edit dependency sourcefile')
-    parser_edit.set_defaults(func=edit)
-    parser_edit.add_argument('path', nargs=1)
+    parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
+    parser_sync.set_defaults(func=sync)
+    parser_sync.add_argument('package', nargs=1, help='the name of changes to sync-- can either be package_name or a path to a file including the package name (i.e. foo/bar.py , where foo is the package)')
 
     return parser
+
 
 def main():
     parser = prepare_parser()

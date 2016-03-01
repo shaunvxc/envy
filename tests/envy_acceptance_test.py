@@ -3,7 +3,8 @@ import os
 import envy
 import pkg_resources
 
-from envy import active_venv, get_active_venv, in_python_package, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path, sync, clean
+from envy import get_active_venv, get_package_name, get_envy_path, original_backed_up, get_venv_full_package_path, sync, clean
+from envy.decorators import active_venv, in_python_package
 
 from mock import MagicMock, PropertyMock
 from mock import patch
@@ -23,9 +24,9 @@ def setup_test(f):
     The idea is that the acceptance tests + the tests in envy_test.py will suffice.
     """
     def wrap_patches(*args, **kwargs):
-        with patch('envy.application.active_venv', return_value=True):
+        with patch('envy.decorators.active_venv', return_value=True):
             with patch('envy.application.get_active_venv', return_value="someenv"):
-                with patch('envy.application.in_python_package', return_value=True):
+                with patch('envy.decorators.in_python_package', return_value=True):
                     with patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base)):
                         with patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base)):
                             with patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)):
