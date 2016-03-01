@@ -67,6 +67,7 @@ to your .bashrc file.
 `$ pip install envy`
 
 ####Future work:
+- implement bash auto-completion
 - allow syncing from anywhere on filesystem
 - improve test coverage
 - add optional virtualenv argument to allow syncing/editing to nonactive virtualenvs
