@@ -67,7 +67,9 @@ to your .bashrc file.
 `$ pip install envy`
 
 ####Future work:
-- implement bash auto-completion
+- handle egg-named locally built packages? or enforce local building with pip instead?
+- maybe play around with pipsi (https://github.com/mitsuhiko/pipsi) for psuedo-global installation of envy?
+- bash auto-completion
 - allow syncing from anywhere on filesystem
 - improve test coverage
 - add optional virtualenv argument to allow syncing/editing to nonactive virtualenvs
