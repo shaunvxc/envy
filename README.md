@@ -6,7 +6,7 @@ Have you ever needed to look at some code living in one of your virtual environm
 
 `envy` is a utility that allows you to ****safely**** **interact with all of the site-packages** in your currently active `virtualenv` as if they were in your **current working directory**
 
-![envy_newest](https://cloud.githubusercontent.com/assets/3979753/13486342/4b4ec2c0-e0de-11e5-90c8-7048bb346d42.gif)
+![envy_best](https://cloud.githubusercontent.com/assets/3979753/13486424/fdc79792-e0de-11e5-9c24-083a6cbb2f87.gif)
 
 ### How?
 Let's say you are working in a virtual environment for a project `foo` but are getting errors thrown from one of `foo`'s depedencies-- a library called `bar`.  The stacktrace tells us the error was thrown from `baz.py`.  Using `envy`, simply run (from anywhere in your file system):
