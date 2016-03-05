@@ -4,7 +4,7 @@
 
 Have you ever needed to look at some code living in one of your virtual environments? And then spent a good 3 or 4 seconds typing out the path? At which point you were weary about making changes/setting breakpoints in your site-packages without first creating a backup... which then needed to be restored again after testing, and yada yada yada.  *This workflow is annoying and tedious*.
 
-`envy` is a utility that allows you to ****safely**** **interact with all of the site-packages** in your currently active `virtualenv` as if they were in your **current working directory**
+`envy` is a utility that allows you to ****safely**** **interact with all of the site-packages** in your currently active `virtualenv` as if they were in your **current working directory.**
 
 ![envy_best5](https://cloud.githubusercontent.com/assets/3979753/13486757/df564a3a-e0e1-11e5-9e48-666fb658f6f4.gif)
 
