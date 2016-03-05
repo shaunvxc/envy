@@ -29,7 +29,7 @@ def test_is_active_venv():
     # don't like patching all of sys here but otherwise the tests can have some trouble when run not in a virtualenv
     # (Ideally the tests SHOULD be run from a virtualenv).  THe other option was up to update the application code
     # which I felt would be worse than this..
-    with patch('envy.application.sys') as mock_sys:
+    with patch('envy.decorators.sys') as mock_sys:
         type(mock_sys).prefix = PropertyMock(return_value="./testsrc/someuser/.virtualenvs/someenv/bin")
         type(mock_sys).real_prefix = PropertyMock(return_value="something/else")
         assert active_venv() == True
