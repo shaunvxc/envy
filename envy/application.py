@@ -61,7 +61,7 @@ def get_editor():
         return os.environ['EDITOR']
 
     print ("No $EDITOR system env var specified specified, defaulting to nano...")
-    return "nano"
+    return "vi"
 
 
 @validate_env
