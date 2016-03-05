@@ -5,7 +5,7 @@ import pkg_resources
 
 from envy import get_active_venv, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path
 
-from envy.decorators import active_venv, in_python_package
+from envy.decorators import is_active_venv, in_python_package
 
 from mock import MagicMock, PropertyMock
 from mock import patch
@@ -32,7 +32,7 @@ def test_is_active_venv():
     with patch('envy.decorators.sys') as mock_sys:
         type(mock_sys).prefix = PropertyMock(return_value="./testsrc/someuser/.virtualenvs/someenv/bin")
         type(mock_sys).real_prefix = PropertyMock(return_value="something/else")
-        assert active_venv() == True
+        assert is_active_venv() == True
 
 @setup_test
 def test_get_package_name(mock_os):

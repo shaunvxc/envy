@@ -3,7 +3,7 @@ import sys
 
 def validate_env(f):
     def wrapper(args):
-        if not active_venv():
+        if not is_active_venv():
             print("ERR: `envy` must be run from within an active virtualenv!")
             return False
         return f(args)
@@ -19,7 +19,7 @@ def validate_pkg(f):
     return wrapper
 
 
-def active_venv():
+def is_active_venv():
     if hasattr(sys, 'real_prefix'):
         return True
 
