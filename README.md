@@ -62,7 +62,7 @@ For the time being, `sync` commands cannot be run as flexibly as `edit` and `cle
 
 `export EDITOR=your_editor_of_choice`
 
-to your .bashrc file.
+to your `.bashrc` file.
 
 ##Installation
 
