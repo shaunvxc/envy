@@ -70,7 +70,6 @@ to your `.bashrc` file.
 
 ####Future work:
 - handle egg-named locally built packages? or enforce local building with pip instead?
-- maybe play around with pipsi (https://github.com/mitsuhiko/pipsi) for psuedo-global installation of envy?
 - bash auto-completion
 - allow syncing from anywhere on filesystem
 - improve test coverage
