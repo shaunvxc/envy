@@ -41,19 +41,19 @@ As with `envy edit`, an backup of the package's (`ham`'s) state will be created 
 
 `(eggs)$ envy clean ham`
 
-#### No talk, straight usage :no_mouth:
+## No talk, straight usage :no_mouth:
 
-Edit any file from any site-package installed in your active virtual environment:
+####Edit any file from any site-package installed in your active virtual environment:
 
 `(active-virtualenv)$ envy edit any-site-package/any-file.py`
 
-Discard any and all edits and return `any-site-package` to its original state:
+####Discard any and all edits and return `any-site-package` to its original state:
 
 `(active-virtualenv)$ envy clean any-site-package`
 
 You can run both `edit` and `clean` from anywhere in your filesystem, as long as you are in a virtualenv that contains the package you ask it for.
 
-To sync all local changes from some `random_lib` to where its copy in `some-virtualenv`, run:
+####Sync all local changes from `random_lib` to where it lives in `some-virtualenv`:
 
 `(some-virtualenv):dev/random_lib$ envy sync random_lib`
 
