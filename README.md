@@ -72,7 +72,7 @@ to your `.bashrc` file.
 
 ####Future work:
 - handle egg-named locally built packages? or enforce local building with pip instead?
-- allow syncing from anywhere on filesystem
+- allow `sync` to be run from anywhere on filesystem
 - improve test coverage
 - add optional virtualenv argument to allow syncing/editing to nonactive virtualenvs
 
