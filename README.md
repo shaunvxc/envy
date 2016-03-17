@@ -25,7 +25,6 @@ Environment safe from corruption, you can confidentally throw down `pdb`'s, `pri
 And it'll be like you were never there!
 
 ### Wait, there's more! :pig2: :egg:
-With `envy` you can also test changes on a library that you maintain and have checked out locally. 
 
 Say you maintain a library `ham`, as well as another project `eggs` that depends on `ham`.  You want to test out some of your recent changes to `ham`, but are far from ready to start messing with the versioning or running `setup.py install`. With `envy` you can very quickly sync the changes from your local dev copy of `ham` to the one that lives `eggs` virtual environment like so:
 
