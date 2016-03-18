@@ -57,11 +57,9 @@ def back_up(venv_pkg_path, pkg_path):
 
 
 def get_editor():
-    if 'EDITOR' in os.environ:
-        return os.environ['EDITOR']
-
-    print ("No $EDITOR system env var specified specified, defaulting to nano...")
-    return "vi"
+    editor = os.environ.get('EDITOR', 'vi')
+    if editor == 'vim': editor = 'vi' # vim does not like being launched from python
+    return editor
 
 
 @validate_env
