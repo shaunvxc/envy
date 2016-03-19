@@ -20,7 +20,7 @@ setup(
     license='MIT',
     author='Shaun Viguerie',
     author_email='shaunvig114@gmail.com',
-    description='interact with virtualenv site-packages as if they were in your working directory',
+    description='safely and easily debug files deep in python virtualenvs',
     entry_points={
         'console_scripts': ['envy = envy.application:main']
     },
