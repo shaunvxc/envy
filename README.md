@@ -18,7 +18,7 @@ and you'll instantly be looking at the point-of-error from your favorite text ed
 ##### Great, the file is open, but I shouldn't create a backup before editing a file in my site-packages? :confused:
 This is a good practice, but with `envy`, there is no need!  Before launching the editor, `envy` first creates a backup of the package in `~/.envies/foo/bar`.   
 
-Environment safe from corruption, you can confidentally throw down `pdb`'s, `print`'s, or any little hack you want!   Whenever you are ready to **restore the package back to it's original state**, you need only run:
+Environment safe from corruption, you can confidentally throw down `pdb`s, `print`s, or any little hack you want!   Whenever you are ready to **restore the package back to it's original state**, you need only run:
 
 `(foo)$ envy clean bar`
 
