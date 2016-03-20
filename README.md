@@ -66,8 +66,14 @@ For the time being, `sync` commands cannot be run as flexibly as `edit` and `cle
 to your `.bashrc` file.
 
 ##Installation
-
 `$ pip install envy`
+
+For manual installation:
+```shell
+$ git clone https://github.com/shaunvxc/envy.git
+$ cd envy
+$ python setup.py install
+```
 
 ####Future work:
 - Explore the option of packaging in a diff. format (installation with `curl`), in order for it to be available globally (rather than on a per `virtualenv` basis)
