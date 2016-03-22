@@ -68,7 +68,8 @@ def edit(args):
 
     full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
 
-    file_path = args.path[0].split("/")[-1]
+    split_file_path = args.path[0].split("/")[1:]
+    file_path = "/".join(split_file_path)
 
     if not original_backed_up(args.path[0]):
         print ("backing up {} ".format(full_package_path))
