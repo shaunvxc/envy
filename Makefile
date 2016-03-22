@@ -24,10 +24,10 @@ install:
 	pip install -r requirements.txt
 
 publish: clean tag
-        @if [ -e "$$HOME/.pypirc" ]; then \
+	@if [ -e "$$HOME/.pypirc" ]; then \
                 echo "Uploading to pypi"; \
                 git stash
-                python setup.py sdist upload \
+		python setup.py sdist upload \
 		git stash apply
 	else \
                 echo "You should create a file called '.pypirc' under your home dir.\n"; \
