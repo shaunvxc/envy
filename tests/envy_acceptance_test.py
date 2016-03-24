@@ -10,6 +10,8 @@ from mock import MagicMock, PropertyMock
 from mock import patch
 import argparse
 
+## TODO: Add test for deeply nested files
+
 base = os.getcwd()
 
 def setup_test(f):
