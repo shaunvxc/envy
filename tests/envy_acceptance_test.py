@@ -21,7 +21,7 @@ def setup_test(f):
     thing IRL won't work on this dummy data.  So, we patch it all and let the code responsible for backing
     up copies and moving changes around work with mocked paths.
 
-    The idea is that the acceptance tests + the tests in envy_test.py will suffice.
+    The idea is that the acceptance tests + the tests in envy_test.py will (hopefully) provide enough coverage.
     """
     def wrap_patches(*args, **kwargs):
         with patch('envy.decorators.is_active_venv', return_value=True):
