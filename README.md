@@ -34,7 +34,7 @@ You can also sync indivual files:
 
 `(eggs)$ envy sync ham/spam.py`
 
-**Note** that the `envy sync` commands must be run from within your local copy of the package you are syncing (i.e. `ham`)
+***Note*** that the `envy sync` commands must be run from within your local copy of the package you are syncing (i.e. `ham`)
 
 As with `envy edit`, an backup of the package's (`ham`'s) state will be created automatically.  As with before, to restore the original state:
 
