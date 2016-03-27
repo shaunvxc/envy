@@ -62,14 +62,18 @@ def get_editor():
     return editor
 
 
+def get_file_path(path):
+    split_file_path = path.split("/")[1:]
+    return "/".join(split_file_path)
+
+
 @validate_env
 def edit(args):
     pkg_name_given_in_arg = args.path[0].split('/')[0]
 
     full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
 
-    split_file_path = args.path[0].split("/")[1:]
-    file_path = "/".join(split_file_path)
+    file_path = get_file_path(args.path[0])
 
     if not original_backed_up(args.path[0]):
         print ("backing up {} ".format(full_package_path))

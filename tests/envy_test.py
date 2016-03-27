@@ -3,7 +3,7 @@ import os
 import envy
 import pkg_resources
 
-from envy import get_active_venv, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path
+from envy import get_active_venv, get_package_name, get_envy_path,  original_backed_up, get_venv_full_package_path, get_file_path
 
 from envy.decorators import is_active_venv, in_python_package
 
@@ -73,3 +73,9 @@ def test_get_active_venv_using_workon_path(mock_os):
             if 'VIRTUAL_ENV' in os.environ:
                 del os.environ['VIRTUAL_ENV']
             assert get_active_venv() == 'someenv'
+
+
+@setup_test
+def test_get_file_path(mock_os):
+    assert get_file_path('package/package/subpackage/subsubpackage/some_module.py') == 'package/subpackage/subsubpackage/some_module.py'
+    assert get_file_path('package/package/some_module.py') == 'package/some_module.py'
