@@ -25,7 +25,7 @@ setup(
         'console_scripts': ['envy = envy.application:main']
     },
     setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
+    tests_require=['pytest', 'mock'],
     test_suite="tests",
     install_requires=required,
     classifiers=[
