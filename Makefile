@@ -4,10 +4,7 @@ all: clean setup test
 
 clean:
 	@echo "Removing junk..."
-	rm -f .coverage
 	rm -f *.txt~
-	rm -f tests/*.py~
-	rm -f pytchfork/*.py~
 
 init:
 	@echo "Building devmode..."
@@ -18,10 +15,6 @@ init:
 setup:
 	@echo "Installing package locally..."
 	python setup.py install
-
-install:
-	@echo "Installing requirements..."
-	pip install -r requirements.txt
 
 publish: clean tag
 	@if [ -e "$$HOME/.pypirc" ]; then \
@@ -49,5 +42,4 @@ tag:
 
 test:
 	@echo "Running test..."
-	rm -f .coverage
 	python setup.py test
