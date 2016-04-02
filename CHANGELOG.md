@@ -1,7 +1,9 @@
 
 ## 0.0.9
 
-  **a083560**: Fix finding deeply nested files in a package
+  **a083560**: Fix finding deeply nested files in a package. The following usage now works:
+  
+  	(some_env)$ envy edit package/subfolder/some_module.py
 
 ## 0.0.8
 
