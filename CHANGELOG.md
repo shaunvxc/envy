@@ -1,4 +1,8 @@
 
+## 0.0.10
+
+  **a2c47aa**: explicitly require 'mock' in tests_require in setup.py
+
 ## 0.0.9
 
   **a083560**: Fix finding deeply nested files in a package. The following usage now works:
