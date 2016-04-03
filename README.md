@@ -76,6 +76,7 @@ $ python setup.py install
 ```
 
 ##Future work:
+- add a `envy diff` function to compare currently applied changes with the clean, backed-up copy
 - Explore the option of packaging in a diff. format (installation with `curl`), in order for it to be available globally (rather than on a per `virtualenv` basis)
 - handle egg-named locally built packages? or enforce local building with pip instead?
 - allow `sync` to be run from anywhere on filesystem (would likely require an env-var like `$DEV_SRC`)
