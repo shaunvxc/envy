@@ -16,6 +16,10 @@ def get_envy_base():
     return os.path.expanduser("~/.envies")
 
 
+def get_envy_env_root():
+    return os.path.expanduser("~/.envies/{}".format(get_active_venv()))
+
+
 def get_active_venv():
     if 'VIRTUAL_ENV' in os.environ:
         return os.environ['VIRTUAL_ENV'].split('/')[-1]
@@ -106,20 +110,29 @@ def sync(args):
 
 @validate_env
 def clean(args):
-    if not os.path.isdir(get_envy_path(args.package[0])):
-        print ("uh oh..no recorded backup in {}".format(get_envy_path(args.package[0])))
+    if args.all:
+        for package in os.listdir(get_envy_env_root()):
+            restore_environment(package)
+    else:
+        restore_environment(args.package[0])
+
+
+def restore_environment(package_name):
+    if not os.path.isdir(get_envy_path(package_name)):
+        print ("uh oh..no recorded backup in {}".format(get_envy_path(package_name)))
         return
 
-    venv_pkg_path = get_venv_full_package_path(args.package[0])
-    print("cleaning applied changes")
+    venv_pkg_path = get_venv_full_package_path(package_name)
+    print("cleaning applied changes for {}".format(package_name))
     shutil.rmtree(venv_pkg_path)
-    print ("restoring original virtualenv state")
-    shutil.copytree(get_envy_path(args.package[0]), venv_pkg_path)
+    print ("restoring original {}'s virtualenv state".format(package_name))
+    shutil.copytree(get_envy_path(package_name), venv_pkg_path)
 
     if os.path.isdir(venv_pkg_path):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
-        shutil.rmtree(get_envy_path(args.package[0]))
+        shutil.rmtree(get_envy_path(package_name))
+
 
 
 def copytree(src, dst):
@@ -155,7 +168,8 @@ def prepare_parser():
 
     parser_clean = subparsers.add_parser('clean', help='reset virtualenv to original state')
     parser_clean.set_defaults(func=clean)
-    parser_clean.add_argument('package', nargs=1, help='the name of the package to clean')
+    parser_clean.add_argument('package', nargs='?',help='the name of the package to clean')
+    parser_clean.add_argument('--all', action='store_true', help='clean all backed up environments')
 
     parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
     parser_sync.set_defaults(func=sync)

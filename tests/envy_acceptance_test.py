@@ -30,10 +30,11 @@ def setup_test(f):
             with patch('envy.application.get_active_venv', return_value="someenv"):
                 with patch('envy.decorators.in_python_package', return_value=True):
                     with patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base)):
-                        with patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base)):
-                            with patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)):
-                                with patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/src/some_package/some_package".format(base)):
-                                    return f(*args, **kwargs)
+                        with patch('envy.application.get_envy_env_root', return_value="{}/tests/testsrc/someuser/.envies/someenv/".format(base)):
+                            with patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package".format(base)):
+                                with patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package'.format(base)):
+                                    with patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/src/some_package/some_package".format(base)):
+                                        return f(*args, **kwargs)
 
     return wrap_patches
 
@@ -48,6 +49,8 @@ def test_sync_package_and_clean(mock_os):
 
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == True
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
+
+    args.all = False
 
     clean(args)
 
@@ -66,6 +69,7 @@ def test_sync_file_and_clean(mock_os):
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == True
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
 
+    args.all = True
     clean(args)
 
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
@@ -84,7 +88,9 @@ def test_sync_file_from_inner_dir_and_clean(mock_os):
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == True
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == True
 
+    args.all = False
     clean(args)
+
 
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == False
