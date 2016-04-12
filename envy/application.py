@@ -16,10 +16,6 @@ def get_envy_base():
     return os.path.expanduser("~/.envies")
 
 
-def get_envy_env_root():
-    return os.path.expanduser("~/.envies/{}".format(get_active_venv()))
-
-
 def get_active_venv():
     if 'VIRTUAL_ENV' in os.environ:
         return os.environ['VIRTUAL_ENV'].split('/')[-1]
@@ -111,7 +107,7 @@ def sync(args):
 @validate_env
 def clean(args):
     if args.all:
-        for package in os.listdir(get_envy_env_root()):
+        for package in os.listdir(get_envy_base() + "/{}".format(get_active_venv())):
             restore_environment(package)
     else:
         restore_environment(args.package[0])
@@ -181,7 +177,6 @@ def prepare_parser():
 def main():
     parser = prepare_parser()
     args = parser.parse_args()
-
     if hasattr(args, 'func'):
         args.func(args)
     else:
