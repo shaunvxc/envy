@@ -52,7 +52,7 @@ As with `envy edit`, an backup of the package's (`ham`'s) state will be created 
 
 You can run both `edit` and `clean` from anywhere in your filesystem, as long as you are in a virtualenv that contains the package you ask it for.
 
-####To clean all changes for all edited packages in the currently active `virtualenv`:
+####Restore all edited packages to their original state:
 
 `(active-virtualenv)$ envy clean --all`
 
