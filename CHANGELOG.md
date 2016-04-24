@@ -1,3 +1,6 @@
+## 0.0.11
+
+  **e260da7**: add `clean --all` feature
 
 ## 0.0.10
 
