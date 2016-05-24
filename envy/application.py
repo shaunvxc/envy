@@ -110,7 +110,9 @@ def clean(args):
         for package in os.listdir(get_envy_base() + "/{}".format(get_active_venv())):
             restore_environment(package)
     else:
-        restore_environment(args.package[0])
+        # needs to be args.package instead of args.package[0] here-- as we can also pass --all, making package technically
+        # an optional argument, and hence we use nargs='?' instead of nargs=1.
+        restore_environment(args.package)
 
 
 def restore_environment(package_name):
