@@ -84,6 +84,18 @@ def edit(args):
     editor = get_editor()
     subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
 
+@validate_env
+def diff(args):
+    pkg_name_given_in_arg = args.path[0].split('/')[0]
+    full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
+    file_path = get_file_path(args.path[0])
+
+    if not original_backed_up(args.path[0]):
+        print ("no backup copy exists to diff with for  {}`".format(pkg_name_given_in_arg))
+        return
+
+    subprocess.call(['diff', os.path.join(full_package_path, file_path), os.path.join(get_envy_path(args.path[0]), file_path)])
+
 
 @validate_env
 @validate_pkg
@@ -172,6 +184,10 @@ def prepare_parser():
     parser_sync = subparsers.add_parser('sync', help='sync all files to active virtualenv')
     parser_sync.set_defaults(func=sync)
     parser_sync.add_argument('package', nargs=1, help='the name of changes to sync-- can either be package_name or a path to a file including the package name (i.e. foo/bar.py , where foo is the package)')
+
+    parser_diff = subparsers.add_parser('diff', help='edit dependency sourcefile')
+    parser_diff.set_defaults(func=diff)
+    parser_diff.add_argument('path', nargs=1)
 
     return parser
 
