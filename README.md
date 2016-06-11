@@ -62,6 +62,10 @@ You can run both `edit` and `clean` from anywhere in your filesystem, as long as
 
 For the time being, `sync` commands cannot be run as flexibly as `edit` and `clean` (they will only work when run from within the python package you wish to sync)- although it would certainly be possible to improve this in the future.
 
+####View the differences between the current copy of a package and its backed up (clean) copy:
+
+`(some-virtualenv):$ envy diff package`
+
 ***Note:***
 `envy edit` uses the `$EDITOR` environment varible to launch a text editor-- if this is not set, simply add:
 
