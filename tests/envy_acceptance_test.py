@@ -3,14 +3,12 @@ import os
 import envy
 import pkg_resources
 
-from envy import get_active_venv, get_package_name, get_envy_path, original_backed_up, get_venv_full_package_path, sync, clean
+from envy import get_active_venv, get_package_name, get_envy_path, original_backed_up, get_venv_full_package_path, sync, clean, reset
 from envy.decorators import is_active_venv, in_python_package
 
 from mock import MagicMock, PropertyMock
 from mock import patch
 import argparse
-
-## TODO: Add test for deeply nested files
 
 base = os.getcwd()
 
@@ -90,6 +88,22 @@ def test_sync_file_from_inner_dir_and_clean(mock_os):
     args.all = False
     clean(args)
 
-
     assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package') == False
     assert os.path.isfile('./tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package/test.py') == False
+
+@patch('os.getcwd', return_value='{}/tests/testsrc/someuser/src/some_package2/some_package2'.format(base))
+def test_sync_and_reset(mock_os):
+    with patch('envy.decorators.is_active_venv', return_value=True):
+        with patch('envy.application.get_active_venv', return_value="someenv"):
+            with patch('envy.decorators.in_python_package', return_value=True):
+                with patch('envy.application.get_envy_base', return_value="{}/tests/testsrc/someuser/.envies/".format(base)):
+                    with patch('envy.application.get_envy_path', return_value="{}/tests/testsrc/someuser/.envies/someenv/some_package2".format(base)):
+                        with patch('envy.application.get_venv_full_package_path', return_value='{}/tests/testsrc/someuser/.virtualenvs/someenv/lib/python2.7/site-packages/some_package2'.format(base)):
+                             with patch('os.path.expanduser', return_value="{}/tests/testsrc/someuser/".format(base)):
+                                 args = argparse.Namespace()
+                                 args.package = ['some_package2']
+                                 args.all = False
+                                 os.makedirs('{}/tests/testsrc/someuser/.envies/someenv/some_package2'.format(base))
+                                 assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package2') == True
+                                 reset(args)
+                                 assert os.path.isdir('./tests/testsrc/someuser/.envies/someenv/some_package2') == False

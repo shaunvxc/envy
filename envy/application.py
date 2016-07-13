@@ -116,6 +116,17 @@ def clean(args):
 
 
 @validate_env
+def reset(args):
+    if args.all:
+        for package in os.listdir(get_envy_base() + "/{}".format(get_active_venv())):
+            reset_environment(package)
+    else:
+        # needs to be args.package instead of args.package[0] here-- as we can also pass --all, making package technically
+        # an optional argument, and hence we use nargs='?' instead of nargs=1.
+        reset_environment(args.package)
+
+
+@validate_env
 def diff(args):
     pkg_name_given_in_arg = args.path[0].split('/')[0]
     full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
@@ -143,6 +154,14 @@ def restore_environment(package_name):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
         shutil.rmtree(get_envy_path(package_name))
+
+def reset_environment(package_name):
+    if not os.path.isdir(get_envy_path(package_name)):
+        print ("uh oh..no recorded backup in {}, so nothing to reset".format(get_envy_path(package_name)))
+        return
+
+    print("dropping saved envie for {}".format(package_name))
+    shutil.rmtree(get_envy_path(package_name))
 
 
 def copytree(src, dst):
@@ -188,6 +207,11 @@ def prepare_parser():
     parser_diff = subparsers.add_parser('diff', help='get diff of current state of site-package against backed up copies')
     parser_diff.set_defaults(func=diff)
     parser_diff.add_argument('path', nargs=1)
+
+    parser_reset = subparsers.add_parser('reset', help='reset the persisted backup copy of the provided package ')
+    parser_reset.set_defaults(func=reset)
+    parser_reset.add_argument('package', nargs='?')
+    parser_reset.add_argument('--all', action='store_true', help='clean all backed up environments')
 
     return parser
 
