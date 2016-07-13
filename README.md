@@ -66,6 +66,22 @@ For the time being, `sync` commands cannot be run as flexibly as `edit` and `cle
 
 `(some-virtualenv):$ envy diff package`
 
+####To drop a backup for a specific package, say, `bar`, run:
+
+```bash
+(foo)$ envy reset bar
+dropping saved envie for bar
+```
+
+####To remove all backups for a given environment, call it `foo`, run:
+
+```bash
+(foo)$ envy reset --all
+dropping saved envie for bar
+dropping saved envie for baz
+dropping saved envie for requests
+```
+
 ***Note:***
 `envy edit` uses the `$EDITOR` environment varible to launch a text editor-- if this is not set, simply add:
 
