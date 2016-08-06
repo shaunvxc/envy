@@ -12,11 +12,8 @@ import subprocess
 from envy import VERSION
 from envy.decorators import validate_pkg, validate_env
 
-def get_envy_base():
-    return os.path.expanduser("~/.envies")
 
-
-def get_active_venv():
+def get_virtualenv():
     if 'VIRTUAL_ENV' in os.environ:
         return os.environ['VIRTUAL_ENV'].split('/')[-1]
 
@@ -27,33 +24,41 @@ def get_active_venv():
     return re.search(".virtualenvs/([^/]{1,})/bin", sys.prefix).group(1)
 
 
-def get_package_name(pkg_path):
-    if ('/' not in pkg_path and pkg_path.endswith('.py')) or pkg_path == '.':
+def get_backup_base():
+    return os.path.expanduser("~/.envies")
+
+
+def get_backup_virtualenv():
+    return get_backup_base() +  "/{}".format(get_virtualenv())
+
+
+def get_package_name(target):
+    if ('/' not in target and target.endswith('.py')) or target == '.':
         return os.getcwd().split("/")[-1]
 
-    return pkg_path.split('/')[0]
+    return target.split('/')[0]
 
 
-def get_envy_path(pkg_path):
-    return os.path.expanduser("~/.envies/{}/{}".format(get_active_venv(), get_package_name(pkg_path)))
+def get_backup_package(target):
+    return os.path.expanduser("~/.envies/{}/{}".format(get_virtualenv(), get_package_name(target)))
 
 
-def get_venv_full_package_path(pkg_path):
-    return imp.find_module(get_package_name(pkg_path))[1]
+def get_package_path(target):
+    return imp.find_module(get_package_name(target))[1]
 
 
-def original_backed_up(pkg_path):
-    if not os.path.isdir(get_envy_base()):
-        os.makedirs('{}'.format(get_envy_base()))
+def original_backed_up(target_package):
+    if not os.path.isdir(get_backup_base()):
+        os.makedirs('{}'.format(get_backup_base()))
 
-    if not os.path.isdir(get_envy_base() + "/{}".format(get_active_venv())):
-        os.makedirs('{}'.format(get_envy_base() +  "/{}".format(get_active_venv())))
+    if not os.path.isdir(get_backup_virtualenv()):
+        os.makedirs('{}'.format(get_backup_virtualenv()))
 
-    return os.path.isdir(get_envy_path(pkg_path))
+    return os.path.isdir(get_backup_package(target_package))
 
 
-def back_up(venv_pkg_path, pkg_path):
-    shutil.copytree(venv_pkg_path, get_envy_path(pkg_path))
+def back_up(package_path):
+    shutil.copytree(package_path, get_backup_package(package_path.split('/')[-1]))
 
 
 def get_editor():
@@ -62,42 +67,39 @@ def get_editor():
     return editor
 
 
-def get_file_path(path):
-    split_file_path = path.split("/")[1:]
+def get_file_path(target):
+    split_file_path = target.split("/")[1:]
     return "/".join(split_file_path)
 
 
 @validate_env
 def edit(args):
-    pkg_name_given_in_arg = args.path[0].split('/')[0]
-
-    full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
+    package_path = get_package_path(args.path[0])
+    if not original_backed_up(args.path[0]):
+        print ("backing up {} ".format(package_path))
+        back_up(package_path)
+    else:
+        print ("backup copy already exists...to restore it before applying new changes run `envy clean {}`".format(get_package_name(args.path[0])))
 
     file_path = get_file_path(args.path[0])
-
-    if not original_backed_up(args.path[0]):
-        print ("backing up {} ".format(full_package_path))
-        back_up(full_package_path, args.path[0])
-    else:
-        print ("backup copy already exists...to restore it before applying new changes run `envy clean {}`".format(pkg_name_given_in_arg))
-
     editor = get_editor()
-    subprocess.call([editor, os.path.join(full_package_path, file_path)], shell = (editor == 'vim'))
+    subprocess.call([editor, os.path.join(package_path, file_path)], shell = (editor == 'vim'))
 
 
 @validate_env
 @validate_pkg
 def sync(args):
-    venv_pkg_path = get_venv_full_package_path(args.package[0])
+    package_path = get_package_path(args.package[0])
+
     if not original_backed_up(args.package[0]):
-        print ("backing up {} ".format(venv_pkg_path))
-        back_up(venv_pkg_path, args.package[0])
+        print ("backing up {} ".format(package_path))
+        back_up(package_path)
     else:
         print ("backup copy already exists...to restore it before applying new changes run `envy clean {}`".format(args.package[0].split('/')[0]))
 
     try:
         print ("Syncing local changes")
-        copytree(args.package[0], venv_pkg_path)
+        copytree(args.package[0], package_path)
         print ("Local changes synced")
     except Exception as e:
         clean(args)
@@ -107,7 +109,7 @@ def sync(args):
 @validate_env
 def clean(args):
     if args.all:
-        for package in os.listdir(get_envy_base() + "/{}".format(get_active_venv())):
+        for package in os.listdir(get_backup_virtualenv()):
             restore_environment(package)
     else:
         # needs to be args.package instead of args.package[0] here-- as we can also pass --all, making package technically
@@ -118,7 +120,7 @@ def clean(args):
 @validate_env
 def reset(args):
     if args.all:
-        for package in os.listdir(get_envy_base() + "/{}".format(get_active_venv())):
+        for package in os.listdir(get_backup_virtualenv()):
             reset_environment(package)
     else:
         # needs to be args.package instead of args.package[0] here-- as we can also pass --all, making package technically
@@ -128,40 +130,39 @@ def reset(args):
 
 @validate_env
 def diff(args):
-    pkg_name_given_in_arg = args.path[0].split('/')[0]
-    full_package_path = get_venv_full_package_path(pkg_name_given_in_arg)
-    file_path = get_file_path(args.path[0])
-
     if not original_backed_up(args.path[0]):
-        print ("no backup copy exists to diff with for  {}`".format(pkg_name_given_in_arg))
+        print ("no backup copy exists to diff with for  {}`".format(get_package_name(args.path[0])))
         return
 
-    subprocess.call(['diff', os.path.join(full_package_path, file_path), os.path.join(get_envy_path(args.path[0]), file_path)])
+    package_path = get_package_path(args.path[0])
+    file_path = get_file_path(args.path[0])
+    subprocess.call(['diff', os.path.join(package_path, file_path), os.path.join(get_backup_package(args.path[0]), file_path)])
 
 
 def restore_environment(package_name):
-    if not os.path.isdir(get_envy_path(package_name)):
-        print ("uh oh..no recorded backup in {}".format(get_envy_path(package_name)))
+    if not os.path.isdir(get_backup_package(package_name)):
+        print ("uh oh..no recorded backup in {}".format(get_backup_package(package_name)))
         return
 
-    venv_pkg_path = get_venv_full_package_path(package_name)
+    package_path = get_package_path(package_name)
     print("cleaning applied changes for {}".format(package_name))
-    shutil.rmtree(venv_pkg_path)
+    shutil.rmtree(package_path)
     print ("restoring original {}'s virtualenv state".format(package_name))
-    shutil.copytree(get_envy_path(package_name), venv_pkg_path)
+    shutil.copytree(get_backup_package(package_name), package_path)
 
-    if os.path.isdir(venv_pkg_path):
+    if os.path.isdir(package_path):
         # ensure successful copy before removing the backup.
         print ("removing .envie")
-        shutil.rmtree(get_envy_path(package_name))
+        shutil.rmtree(get_backup_package(package_name))
+
 
 def reset_environment(package_name):
-    if not os.path.isdir(get_envy_path(package_name)):
-        print ("uh oh..no recorded backup in {}, so nothing to reset".format(get_envy_path(package_name)))
+    if not os.path.isdir(get_backup_package(package_name)):
+        print ("uh oh..no recorded backup in {}, so nothing to reset".format(get_backup_package(package_name)))
         return
 
     print("dropping saved envie for {}".format(package_name))
-    shutil.rmtree(get_envy_path(package_name))
+    shutil.rmtree(get_backup_package(package_name))
 
 
 def copytree(src, dst):
