@@ -42,38 +42,38 @@ As with `envy edit`, an backup of the package's (`ham`'s) state will be created 
 
 ## No talk, straight usage :no_mouth:
 
-####Edit any file from any site-package installed in your active virtual environment:
+#### Edit any file from any site-package installed in your active virtual environment:
 
 `(active-virtualenv)$ envy edit any-site-package/any-file.py`
 
-####Discard any and all edits and return `any-site-package` to its original state:
+#### Discard any and all edits and return `any-site-package` to its original state:
 
 `(active-virtualenv)$ envy clean any-site-package`
 
 You can run both `edit` and `clean` from anywhere in your filesystem, as long as you are in a virtualenv that contains the package you ask it for.
 
-####Restore all edited packages to their original state:
+#### Restore all edited packages to their original state:
 
 `(active-virtualenv)$ envy clean --all`
 
-####Sync all local changes from `random_lib` to where it lives in `some-virtualenv`:
+#### Sync all local changes from `random_lib` to where it lives in `some-virtualenv`:
 
 `(some-virtualenv):dev/random_lib$ envy sync random_lib`
 
 For the time being, `sync` commands cannot be run as flexibly as `edit` and `clean` (they will only work when run from within the python package you wish to sync)- although it would certainly be possible to improve this in the future.
 
-####View the differences between the current copy of a package and its backed up (clean) copy:
+#### View the differences between the current copy of a package and its backed up (clean) copy:
 
 `(some-virtualenv):$ envy diff package`
 
-####To drop a backup for a specific package:
+#### To drop a backup for a specific package:
 
 ```bash
 (foo)$ envy reset package
 dropping saved envie for package
 ```
 
-####To remove all backups for a given environment:
+#### To remove all backups for a given environment:
 
 ```bash
 (foo)$ envy reset --all
@@ -89,7 +89,7 @@ dropping saved envie for package3
 
 to your `.bashrc` file.
 
-##Installation
+## Installation
 `$ pip install envy`
 
 For manual installation:
@@ -99,7 +99,7 @@ $ cd envy
 $ python setup.py install
 ```
 
-##Future work:
+## Future work:
 - add a `envy diff` function to compare currently applied changes with the clean, backed-up copy
 - Explore the option of packaging in a diff. format (installation with `curl`), in order for it to be available globally (rather than on a per `virtualenv` basis)
 - handle egg-named locally built packages? or enforce local building with pip instead?
@@ -114,6 +114,3 @@ $ python setup.py install
 1. Run the tests (`make test`)
 1. Push change to the branch (`git push origin new-feature`)
 1. Create a Pull Request
-
-
-
